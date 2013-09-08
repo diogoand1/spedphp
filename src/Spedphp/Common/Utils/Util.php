@@ -9,14 +9,14 @@
  * @package   NFePHP
  */
 
-namespace Common\Aux;
+namespace Common\Utils;
 
 use Common\Exception;
 
 /**
  * 
  */
-class AuxClass
+class UtilClass
 {
  
     public $errMsg = '';
