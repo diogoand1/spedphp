@@ -2,7 +2,7 @@
 
 namespace SpedPHP\Test\Components\Xml;
 
-use SpedPHP\Components\Xml\Document;
+use SpedPHP\Common\Components\Xml\Document;
 
 /**
  * @category   SpedPHP
