@@ -1,112 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project name="spedphp" default="build" basedir=".">
+<?xml version="1.0"?>
+<project name="spedphp" description="API for communications with SEFAZ (Brazil) for issuing invoices and other official electronic documents" default="build" basedir=".">
     <property name="source" value="src"/>
-
-    <target name="clean"
-        description="Limpa e cria os diretorios dos artefatos">
-        <delete dir="${basedir}/build/api"/>
-        <delete dir="${basedir}/build/code-browser"/>
-        <delete dir="${basedir}/build/coverage"/>
-        <delete dir="${basedir}/build/logs"/>
-        <delete dir="${basedir}/build/pdepend"/>
-
-        <mkdir dir="${basedir}/build/api"/>
-        <mkdir dir="${basedir}/build/code-browser"/>
-        <mkdir dir="${basedir}/build/coverage"/>
-        <mkdir dir="${basedir}/build/logs"/>
-        <mkdir dir="${basedir}/build/pdepend"/>
+    <property name="basedir" value="./"/>
+    <property name="builddir" value="${basedir}/build"/>
+    <property name="sourcedir" value="${basedir}/src"/>
+    <property name="testdir" value="${basedir}/tests"/>
+    <target name="build" depends="prepare,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit"/>
+    <target name="clean" description="Cleanup build artifacts">
+        <delete dir="${builddir}/api"/>
+        <delete dir="${builddir}/coverage"/>
+        <delete dir="${builddir}/logs"/>
+        <delete dir="${builddir}/pdepend"/>
     </target>
-
-    <target name="phpunit"
-        description="Roda os unit tests usando PHPUnit e gerando junit.xml e clover.xml">
-        <exec executable="phpunit" failonerror="true"/>
+    <target name="prepare" depends="clean" description="Prepare for build">
+        <mkdir dir="${builddir}/api"/>
+        <mkdir dir="${builddir}/coverage"/>
+        <mkdir dir="${builddir}/logs"/>
+        <mkdir dir="${builddir}/pdepend"/>
+        <mkdir dir="${builddir}/phpdox"/>
     </target>
-
-    <target name="parallelTasks"
-        description="Executa tarefas em paralelo usando um total de 2 threads: pdepend, phpmd, phpcpd, phpcs, phpdoc e phploc.">
-        <parallel threadCount="2">
-            <sequential>
-                <antcall target="pdepend"/>
-                <antcall target="phpmd"/>
-            </sequential>
-            <antcall target="phpcpd"/>
-            <antcall target="phpcs"/>
-            <antcall target="phpdoc"/>
-            <antcall target="phploc"/>
-        </parallel>
-    </target>
-
-    <target name="pdepend"
-        description="Gera jdepend.xml e graficos de metricas do software usando PHP_Depend">
-        <exec executable="pdepend">
-            <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
-            <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
-            <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-            <arg path="${source}" />
-        </exec>
-    </target>
-
-    <target name="phpmd"
-        description="Gera pmd.xml usando PHPMD">
-        <exec executable="phpmd">
-            <arg path="${source}" />
-            <arg value="xml" />
-            <arg value="${basedir}/build/phpmd.xml" />
-            <arg value="--reportfile" />
-            <arg value="${basedir}/build/logs/pmd.xml" />
-        </exec>
-    </target>
-
-    <target name="phpcpd"
-        description="Gera pmd-cpd.xml usando PHPCPD">
-        <exec executable="phpcpd">
-            <arg value="--log-pmd" />
-            <arg value="${basedir}/build/logs/pmd-cpd.xml" />
-            <arg path="${source}" />
-        </exec>
-    </target>
-
-    <target name="phploc"
-        description="Generate phploc.csv">
-        <exec executable="phploc">
-            <arg value="--log-csv" />
-            <arg value="${basedir}/build/logs/phploc.csv" />
-            <arg path="${source}" />
-        </exec>
-    </target>
-
+    <phplint>
+        <fileset dir="${sourcedir}">
+            <include name="**/*.php"/>
+        </fileset>
+        <fileset dir="${testdir}">
+            <include name="**/*.php"/>
+        </fileset>
+    </phplint>
     <target name="phpcs"
-        description="Gera checkstyle.xml usando PHP_CodeSniffer">
+            description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="phpcs">
+            <arg value="--standard=PSR2"/>
+            <arg path="${sourcedir}"/>
+        </exec>
+    </target>
+    <target name="phpcs-ci"
+            description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
         <exec executable="phpcs" output="/dev/null">
-            <arg value="--report=checkstyle" />
-            <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-            <arg value="--standard=${basedir}/build/phpcs.xml" />
-            <arg path="${source}" />
+            <arg value="--report=checkstyle"/>
+            <arg value="--report-file=${builddir}/logs/checkstyle.xml"/>
+            <arg value="--standard=PSR2"/>
+            <arg path="${sourcedir}"/>
         </exec>
     </target>
-
-    <target name="phpdoc"
-        description="Gera a documentação da API usando PHPDocumentor">
-        <exec executable="phpdoc">
-            <arg value="--directory" />
-            <arg path="${source}" />
-            <arg value="--target" />
-            <arg path="${basedir}/build/api" />
+    <target name="phpmd" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="phpmd">
+            <arg path="${sourcedir}"/>
+            <arg value="text"/>
+            <arg value="${builddir}/phpmd.xml"/>
         </exec>
     </target>
-
-    <target name="phpcb"
-        description="Aggregate tool output with PHP_CodeBrowser">
-        <exec executable="phpcb">
-            <arg value="--log" />
-            <arg path="${basedir}/build/logs" />
-            <arg value="--source" />
-            <arg path="${source}" />
-            <arg value="--output" />
-            <arg path="${basedir}/build/code-browser" />
+    <target name="phpmd-ci"
+            description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
+        <exec executable="phpmd">
+            <arg path="${sourcedir}"/>
+            <arg value="xml"/>
+            <arg value="cleancode, codesize, controversial, design, naming, unusedcode"/>
+            <arg value="--reportfile"/>
+            <arg value="${builddir}/logs/pmd.xml"/>
         </exec>
     </target>
-
-    <target name="build" depends="clean,parallelTasks,phpunit,phpcb"/>
+    <target name="phploc" description="Measure project size using PHPLOC">
+        <exec executable="phploc">
+            <arg value="--count-tests"/>
+            <arg value="--log-csv"/>
+            <arg value="${builddir}/logs/phploc.csv"/>
+            <arg path="${sourcedir}"/>
+        </exec>
+    </target>
+    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="pdepend">
+            <arg value="--jdepend-xml=${builddir}/logs/jdepend.xml"/>
+            <arg value="--jdepend-chart=${builddir}/pdepend/dependencies.svg"/>
+            <arg value="--overview-pyramid=${builddir}/pdepend/overview-pyramid.svg"/>
+            <arg path="${sourcedir}"/>
+        </exec>
+    </target>
+    <target name="phpcpd" description="Find duplicate code using PHPCPD">
+        <exec executable="phpcpd">
+            <arg value="--log-pmd=${builddir}/logs/pmd-cpd.xml"/>
+            <arg path="${sourcedir}"/>
+        </exec>
+    </target>
+    <target name="phpdox" description="Generate API documentation using phpDox">
+        <exec executable="phpdox"/>
+    </target>
+    <target name="phpunit" description="Run unit tests with PHPUnit">
+        <exec executable="phpunit"/>
+    </target>    
 </project>
