@@ -1,11 +1,12 @@
 nbproject
 vendor
-*~
-.idea
-.DS_Store
+local
+config.php
 composer.lock
 *.pfx
 *.pem
-config.php
-local
+.idea
+.DS_Store
+*~
+
 
