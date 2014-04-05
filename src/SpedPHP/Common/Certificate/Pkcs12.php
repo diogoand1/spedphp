@@ -17,17 +17,17 @@ use SpedPHP\Common\Exception;
 class Pkcs12
 {
     //propriedades da classe
-    public $certsDir;
-    public $pfxName;
-    public $cnpj;
-    public $pubKey;
-    public $priKey;
-    public $certKey;
-    public $pubKeyFile;
-    public $priKeyFile;
-    public $certKeyFile;
-    public $expireTimestamp;
-    public $error='';
+    public $certsDir; //diretorio onde o arquivo pfx está localizado
+    public $pfxName; //nome do arquivo pfx
+    public $cnpj; //CNPJ do emitente
+    public $pubKey; //string com a chave publica no formato PEM
+    public $priKey; //string com a chave privada no formato PEM
+    public $certKey;//string com a combionação da chabe publia e privada no formato PEM
+    public $pubKeyFile; //path para a chave publica em arquivo
+    public $priKeyFile; //path para a chave privada em arquivo
+    public $certKeyFile; //path para o certificado em arquivo
+    public $expireTimestamp; //timestampt da validade do certificado
+    public $error=''; //mensagem de erro
 
     //constantes utilizadas na assinatura digital do xml
     const URLDSIG = 'http://www.w3.org/2000/09/xmldsig#';
@@ -42,10 +42,13 @@ class Pkcs12
      * Método de construção da classe
      * @param string $dir Path para a pasta que contêm os certificados digitais
      * @param string $cnpj CNPJ do emitente, sem  ./-, apenas os numeros
+     * @param string $pubKey Chave publica
+     * @param string $priKey Chave privada
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($dir, $cnpj)
+    public function __construct($dir, $cnpj, $pubKey = '', $priKey = '')
     {
+        $flagCert = false;
         if (!is_dir(trim($dir))) {
             throw new Exception\InvalidArgumentException(
                 "Um path válido para os certificados deve ser passado. Diretório [$dir] não foi localizado."
@@ -57,8 +60,14 @@ class Pkcs12
                 "Um CNPJ válido deve ser passado e são permitidos apenas números. Valor passado [$cnpj]."
             );
         }
+        if ($pubKey != '' && $priKey != '') {
+            $this->pubKey = $pubKey;
+            $this->priKey = $priKey;
+            $this->certKey = $priKey."\r\n".$pubKey;
+            $flagCert = true;
+        }
         $this->cnpj = trim($cnpj);
-        $this->init();
+        $this->init($flagCert);
     }//fim __construct
     
     /**
@@ -68,10 +77,10 @@ class Pkcs12
      * Em caso de erro o motivo da falha será indicada na parâmetro
      * error da classe, os outros parâmetros serão limpos e os 
      * arquivos inválidos serão removidos da pasta
-     * 
+     * @param booleam $flagCert indica que as chaves já foram passas como strings
      * @return boolean 
      */
-    private function init()
+    private function init($flagCert = false)
     {
         if (substr($this->certsDir, -1) !== DIRECTORY_SEPARATOR) {
             $this->certsDir .= DIRECTORY_SEPARATOR;
@@ -82,25 +91,40 @@ class Pkcs12
         $this->pubKeyFile =  $this->certsDir.$this->cnpj.'_pubKEY.pem';
         //monta o path completo com o nome do certificado (chave publica e privada) em formato pem
         $this->certKeyFile = $this->certsDir.$this->cnpj.'_certKEY.pem';
-        //verifica se os certificados existem
-        if (is_file($this->priKeyFile) && is_file($this->pubKeyFile) && is_file($this->certKeyFile)) {
-            //se as chaves existem deve ser verificado sua validade
-            $this->pubKey = file_get_contents($this->pubKeyFile);
-            $this->priKey = file_get_contents($this->priKeyFile);
-            $this->certKey = file_get_contents($this->certKeyFile);
+        //se as chaves foram passadas na forma de strings então verificar a validade
+        if ($flagCert) {
             if (!openssl_x509_read($this->pubKey)) {
-                //arquivo não pode ser lido como um certificado então deletar
+                //o dado não é uma chave válida
                 $this->removePemFiles();
                 $this->leaveParam();
-                $this->error = "Certificado não instalado. Instale um novo certificado pfx!!";
+                $this->error = "A chave passada está corrompida ou não é uma chave. Obtenha s chaves corretas!!";
                 return false;
             } else {
                 //já que o certificado existe, verificar seu prazo de validade
+                //o certificado será removido se estiver vencido
                 return $this->validCerts($this->pubKey);
             }
         } else {
-            $this->error = "Certificados não localizados!!";
-            return false;
+            //se as chaves não foram passadas em strings, verifica se os certificados existem
+            if (is_file($this->priKeyFile) && is_file($this->pubKeyFile) && is_file($this->certKeyFile)) {
+                //se as chaves existem deve ser verificado sua validade
+                $this->pubKey = file_get_contents($this->pubKeyFile);
+                $this->priKey = file_get_contents($this->priKeyFile);
+                $this->certKey = file_get_contents($this->certKeyFile);
+                if (!openssl_x509_read($this->pubKey)) {
+                    //arquivo não pode ser lido como um certificado então deletar
+                    $this->removePemFiles();
+                    $this->leaveParam();
+                    $this->error = "Certificado não instalado. Instale um novo certificado pfx!!";
+                    return false;
+                } else {
+                    //já que o certificado existe, verificar seu prazo de validade
+                    return $this->validCerts($this->pubKey);
+                }
+            } else {
+                $this->error = "Certificados não localizados!!";
+                return false;
+            }
         }
         return true;
     }//fim init
@@ -157,11 +181,12 @@ class Pkcs12
      * 
      * @param string $pfxName Nome do arquivo PFX que foi salvo na pasta dos certificados
      * @param string $keyPass Senha de acesso ao certificado PFX
+     * @param boolean $createFiles se true irá criar os arquivos pem das chaves digitais, caso contrario não
      * @return boolean
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      */
-    public function loadNewCert($pfxName, $keyPass = '')
+    public function loadNewCert($pfxName, $keyPass = '', $createFiles = true)
     {
         //monta o caminho completo até o certificado pfx
         $pfxCert = $this->certsDir.$pfxName;
@@ -200,14 +225,16 @@ class Pkcs12
         //monta o path completo com o nome do certificado (chave publica e privada) em formato pem
         $this->certKeyFile = $this->certsDir.$this->cnpj.'_certKEY.pem';
         $this->removePemFiles();
-        //recriar os arquivos pem com o arquivo pfx
-        if (!file_put_contents($this->priKeyFile, $x509certdata['pkey'])) {
-            throw new Exception\RuntimeException(
-                "Falha de permissão de escrita na pasta dos certificados!!"
-            );
+        if ($createFiles) {
+            //recriar os arquivos pem com o arquivo pfx
+            if (!file_put_contents($this->priKeyFile, $x509certdata['pkey'])) {
+                throw new Exception\RuntimeException(
+                    "Falha de permissão de escrita na pasta dos certificados!!"
+                );
+            }
+            file_put_contents($this->pubKeyFile, $x509certdata['cert']);
+            file_put_contents($this->certKeyFile, $x509certdata['pkey']."\r\n".$x509certdata['cert']);
         }
-        file_put_contents($this->pubKeyFile, $x509certdata['cert']);
-        file_put_contents($this->certKeyFile, $x509certdata['pkey']."\r\n".$x509certdata['cert']);
         $this->pubKey=$x509certdata['cert'];
         $this->priKey=$x509certdata['pkey'];
         $this->certKey=$x509certdata['pkey']."\r\n".$x509certdata['cert'];
@@ -224,17 +251,22 @@ class Pkcs12
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      */
-    public function signXML($docxml, $tagid)
+    public function signXML($docxml, $tagid = '')
     {
         if (is_file($docxml)) {
             $xml = file_get_contents($docxml);
         } else {
             $xml = $docxml;
         }
-        $fileIndex = fopen($this->priKEY, "r");
-        $privKey = fread($fileIndex, 8192);
-        fclose($fileIndex);
-        $pkeyid = openssl_get_privatekey($privKey);
+        if ($tagid == '') {
+            $msg = "A tag a saer assinada deve ser indicada.";
+            throw new Exception\InvalidArgumentException($msg);
+        }
+        if ($this->pubKey == '' || $this->priKey == '') {
+            $msg = "As chaves não estão disponíveis.";
+            throw new Exception\InvalidArgumentException($msg);
+        }
+        $pkeyid = openssl_get_privatekey($this->privKey);
         // limpeza do xml com a retirada dos CR, LF e TAB
         $order = array("\r\n", "\n", "\r", "\t");
         $replace = '';
@@ -309,7 +341,7 @@ class Pkcs12
         $signatureNode->appendChild($keyInfoNode);
         $x509DataNode = $xmldoc->createElement('X509Data');
         $keyInfoNode->appendChild($x509DataNode);
-        $cert = $this->cleanCerts($this->pubKEY);
+        $cert = $this->cleanCerts();
         $newNode = $xmldoc->createElement('X509Certificate', $cert);
         $x509DataNode->appendChild($newNode);
         $xml = $xmldoc->saveXML();
@@ -393,13 +425,12 @@ class Pkcs12
      * e compara com a data de hoje.
      * Caso o certificado tenha expirado o mesmo será removido das
      * pastas e o médoto irá retornar false.
-     * 
-     * @param string $cert
+     * @param string $pubKey chave publica
      * @return boolean
      */
-    protected function validCerts($cert)
+    protected function validCerts($pubKey)
     {
-        $data = openssl_x509_read($cert);
+        $data = openssl_x509_read($pubKey);
         $certData = openssl_x509_parse($data);
         // reformata a data de validade;
         $ano = substr($certData['validTo'], 0, 2);
@@ -427,15 +458,14 @@ class Pkcs12
      * formato PEM, deixando o certificado (chave publica) pronta para ser
      * anexada ao xml da NFe
      * 
-     * @param string $certFile
      * @return string
      */
-    protected function cleanCerts($certFile)
+    protected function cleanCerts()
     {
         //inicializa variavel
         $data = '';
-        //carregar a chave publica do arquivo pem
-        $pubKey = file_get_contents($certFile);
+        //carregar a chave publica
+        $pubKey = $this->pubKey;
         //carrega o certificado em um array usando o LF como referencia
         $arCert = explode("\n", $pubKey);
         foreach ($arCert as $curData) {
