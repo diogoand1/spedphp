@@ -73,7 +73,7 @@ class CTe
         
     }//fim manifest
     
-    public function print()
+    public function printDatce()
     {
         
     }//fim print

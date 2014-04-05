@@ -248,7 +248,7 @@ class NFe
         
     }//fim download
     
-    public function printNFe()
+    public function printDanfe()
     {
         
     }//fim print
