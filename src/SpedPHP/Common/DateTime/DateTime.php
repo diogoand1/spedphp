@@ -25,5 +25,5 @@ class DateTime
         } else {
             return '';
         }
-    }//fim st2uts
+    }
 }//fim da classe
