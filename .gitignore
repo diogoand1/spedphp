@@ -2,6 +2,7 @@ nbproject
 vendor
 local
 build
+phpunit.xml
 config.php
 composer.lock
 *.pfx
