@@ -79,7 +79,7 @@ class Wsdl
      * @param string $publicKey
      * @return type
      */
-    protected function downLoadWsdl($url, $privateKey, $publicKey)
+    public function downLoadWsdl($url, $privateKey, $publicKey)
     {
         $soap = new Soap\CurlSoap($privateKey, $publicKey);
         $resposta = $soap->getWsdl($url);

@@ -174,6 +174,9 @@ class CurlSoap
         //verifica se foi retornado o wsdl
         $nPos = strpos($resposta, '<wsdl:def');
         if ($nPos === false) {
+            $nPos = strpos($resposta, '<definit');
+        }
+        if ($nPos === false) {
             //não retornou um wsdl
             return false;
         }
