@@ -2,9 +2,19 @@
     "name": "nfephp",
     "type": "library",
     "description": "SpedPHP é uma API para gerar xmls e fazer a comunicação entre o emitente de Documentos Eletrônicos e os serviços dos SEFAZ estaduais. Inteiramente construído em PHP para rodar sob qualquer sistema operacional.",
-    "keywords": ["nfe","nfephp","spedphp"],
+    "keywords": [
+        "nfe",
+        "nfephp",
+        "spedphp",
+        "sped",
+        "nota fiscal eletrônica",
+        "nota fiscal de serviços"
+    ],
     "homepage": "https://github.com/nfephp-org/spedhp",
-    "license": ["GPL 3", "LGPL 3"],
+    "license": [
+        "GPL 3",
+        "LGPL 3"
+    ],
     "authors": [
         {
             "name": "Roberto L. Machado",
@@ -26,14 +36,17 @@
         "ext-openssl": "*",
         "ext-zip": "*",
         "ext-zlib": "*",
-        "phpunit/phpunit": "3.7.*",
+        "ext-fileinfo": "*",
+        "ext-iconv": "*",
+        "ext-mbstring": "*",
         "openlss/lib-array2xml": "dev-master",
         "ensepar/tcpdf": "dev-master",
         "phpmailer/phpmailer": ">=v5.2.6",
         "endroid/qrcode": "dev-master"
     },
     "require-dev": {
-        "sebastian/phpcpd": "dev-master"
+        "ext-xdebug": "*",
+        "phpunit/phpunit": "3.7.*"
     },        
     "autoload": {
         "psr-0": {

@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Spedphp (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL v.3
- * @package   Spedphp
- */
-
 namespace SpedPHP\NFe;
 
 use SpedPHP\Common\Certificate\Pkcs12;
@@ -17,17 +7,28 @@ use SpedPHP\Common\Soap;
 use SpedPHP\Common\Exception;
 use SpedPHP\Common\DateTime\DateTime;
 
+/**
+ * @category   SpedPHP
+ * @package    SpedPHP\NFe
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
+ */
+
 if (!defined('PATH_ROOT')) {
     define('PATH_ROOT', dirname(realpath(__FILE__)).DIRECTORY_SEPARATOR);
 }
 
 class NFe
 {
-
     public $modsoap = 'curl';
     public $amb = 'homologacao';
     public $sigla = '';
+    
     public $enableSCAN = false;
+    public $enableSVCAN = false;
+    public $enableSVCRS = false;
     public $soapDebug = '';
     
     protected $nfeWs = 'nfeWS.xml';
@@ -42,7 +43,7 @@ class NFe
                                'BA'=>'BA',
                                'CE'=>'CE',
                                'DF'=>'SVRS',
-                               'ES'=>'SVAN',
+                               'ES'=>'SVRS',
                                'GO'=>'GO',
                                'MA'=>'SVAN',
                                'MG'=>'MG',
@@ -54,7 +55,7 @@ class NFe
                                'PI'=>'SVAN',
                                'PR'=>'PR',
                                'RJ'=>'SVRS',
-                               'RN'=>'SVAN',
+                               'RN'=>'SVRS',
                                'RO'=>'SVRS',
                                'RR'=>'SVRS',
                                'RS'=>'RS',
@@ -64,6 +65,9 @@ class NFe
                                'TO'=>'SVRS',
                                'SCAN'=>'SCAN',
                                'SVAN'=>'SVAN',
+                               'SVRS'=>'SVRS',
+                               'SVCAN'=>'SVCAN',
+                               'SVCRS'=>'SVCRS',
                                'DPEC'=>'DPEC');
 
     private $cUFlist = array('AC'=>'12',
@@ -95,11 +99,11 @@ class NFe
                              'TO'=>'17',
                              'SVAN'=>'91');
 
-    private $UrlPortal='http://www.portalfiscal.inf.br/nfe';
+    const URLPORTALNFE='http://www.portalfiscal.inf.br/nfe';
     
-    public function __construct($cnpj, $certsdir)
+    public function __construct($cnpj, $certsdir, $pubKey, $priKey)
     {
-        $this->oPkcs12 = new Pkcs12($certsdir, $cnpj);
+        $this->oPkcs12 = new Pkcs12($certsdir, $cnpj, $pubKey, $priKey);
         
     }//fim __construct
     
@@ -148,7 +152,7 @@ class NFe
         //recuperação do método
         $metodo = $aURL[$servico]['method'];
         //montagem do namespace do serviço
-        $namespace = $this->UrlPortal.'/wsdl/'.$servico.'2';
+        $namespace = URLPORTALNFE.'/wsdl/'.$servico.'2';
         //montagem do cabeçalho da comunicação SOAP
         //ATENÇÂO NESSAS MONTAGENS NÃO PODE HAVER ESPAÇOS ENTRE ><
         $cabec = '';
@@ -157,7 +161,7 @@ class NFe
         //montagem dos dados da mensagem SOAP
         $dados = '';
         $dados .= '<nfeDadosMsg xmlns="'.$namespace.'"><consStatServ xmlns="';
-        $dados .= $this->UrlPortal.'" versao="'.$versao.'"><tpAmb>'.$tpAmb.'</tpAmb>';
+        $dados .= URLPORTALNFE.'" versao="'.$versao.'"><tpAmb>'.$tpAmb.'</tpAmb>';
         $dados .= '<cUF>'.$cUF.'</cUF><xServ>STATUS</xServ></consStatServ></nfeDadosMsg>';
         if ($this->modsoap == 'curl') {
             $soap = new Soap\CurlSoap($this->oPkcs12->priKeyFile, $this->oPkcs12->pubKeyFile);
@@ -299,7 +303,7 @@ class NFe
             }
         }
         //verifica se existem outros serviços exclusivos para esse estado
-        //isso ocorre normalmente para estados como o consulta de cadastro
+        //isso ocorre normalmente para serviços como a consulta de cadastro
         if ($alias == 'SVAN' || $alias == 'SVRS') {
             $xpathExpression = "/WS/UF[sigla='" . $sigla . "']/$ambiente";
             //para cada "nó" no xml que atenda aos critérios estabelecidos

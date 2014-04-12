@@ -1,16 +1,16 @@
 <?php
 
-/**
- * Spedphp (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL v.3
- * @package   Spedphp
- */
 
 namespace SpedPHP\Common\Certificate;
+
+/**
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Certificate
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
+ */
 
 class Asn
 {

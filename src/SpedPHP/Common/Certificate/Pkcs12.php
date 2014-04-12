@@ -179,7 +179,7 @@ class Pkcs12
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      */
-    public function loadNewCert($pfxName, $keyPass = '', $createFiles = true)
+    public function loadNewCert($pfxName, $keyPass = '', $createFiles = true, $ignorevalidity = false, $ignoreowner = false)
     {
         //monta o caminho completo até o certificado pfx
         $pfxCert = $this->certsDir.$pfxName;
@@ -201,15 +201,19 @@ class Pkcs12
                 "O certificado não pode ser lido!! Senha errada ou arquivo corrompido ou formato inválido!!"
             );
         }
-        //verifica sua data de validade
-        if (!$this->validCerts($x509certdata['cert'])) {
-            throw new Exception\RuntimeException($this->error);
+        if (!$ignorevalidity) {
+            //verifica sua data de validade
+            if (!$this->validCerts($x509certdata['cert'])) {
+                throw new Exception\RuntimeException($this->error);
+            }
         }
-        $cnpjCert = Asn::getCNPJCert($x509certdata['cert']);
-        if ($this->cnpj != $cnpjCert) {
-            throw new Exception\InvalidArgumentException(
-                "O Certificado fornecido pertence a outro CNPJ!!"
-            );
+        if (!$ignoreowner) {
+            $cnpjCert = Asn::getCNPJCert($x509certdata['cert']);
+            if ($this->cnpj != $cnpjCert) {
+                throw new Exception\InvalidArgumentException(
+                    "O Certificado fornecido pertence a outro CNPJ!!"
+                );
+            }
         }
         //monta o path completo com o nome da chave privada
         $this->priKeyFile = $this->certsDir.$this->cnpj.'_priKEY.pem';

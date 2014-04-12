@@ -4,7 +4,6 @@ local
 build
 phpunit.xml
 config.php
-*.pfx
 *.pem
 .idea
 .DS_Store
