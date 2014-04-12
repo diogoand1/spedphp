@@ -56,4 +56,25 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result[1], 'O Certificado fornecido pertence a outro CNPJ!!');
         $this->assertEquals($result[2], true);
     }
+    
+    public function testsignXML()
+    {
+        $dir = dirname(__FILE__);
+        $cnpj = '12345678901234';
+        $keyPass = '1234';
+        $pfxName = 'certificado.pfx';
+        $createpemfiles = false;
+        $ignorevalidity = true;
+        $ignoreowner = true;
+        $xmlfile = $dir.DIRECTORY_SEPARATOR.'nfe.xml';
+        $xmlfilesigned = $dir.DIRECTORY_SEPARATOR.'nfe_signed.xml';
+        $xml = file_get_contents($xmlfile);
+        $xmlsigned = file_get_contents($xmlfilesigned);
+        
+        $pkcs = new Pkcs12($dir, $cnpj);
+        $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
+        $xmlresp = $pkcs->signXML($xml, 'infNFe');
+        
+        $this->assertEquals($xmlresp, $xmlsigned);
+    }
 }

@@ -28,14 +28,13 @@ class Pkcs12
     public $certKeyFile; //path para o certificado em arquivo
     public $expireTimestamp; //timestampt da validade do certificado
     public $error=''; //mensagem de erro
-
-    //constantes utilizadas na assinatura digital do xml
-    const URLDSIG = 'http://www.w3.org/2000/09/xmldsig#';
-    const URLCANONMETH = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
-    const URLSIGMETH = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
-    const URLTRANSFMETH1 ='http://www.w3.org/2000/09/xmldsig#enveloped-signature';
-    const URLTRANSFMETH2 = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
-    const URLDIGESTMETH = 'http://www.w3.org/2000/09/xmldsig#sha1';
+    
+    private $urlDSIG = 'http://www.w3.org/2000/09/xmldsig#';
+    private $urlCANONMETH = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+    private $urlSIGMETH = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
+    private $urlTRANSFMETH1 ='http://www.w3.org/2000/09/xmldsig#enveloped-signature';
+    private $urlTRANSFMETH2 = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+    private $urlDIGESTMETH = 'http://www.w3.org/2000/09/xmldsig#sha1';
     
     /**
      * Método de construção da classe
@@ -254,14 +253,14 @@ class Pkcs12
             $xml = $docxml;
         }
         if ($tagid == '') {
-            $msg = "A tag a saer assinada deve ser indicada.";
+            $msg = "A tag a ser assinada deve ser indicada.";
             throw new Exception\InvalidArgumentException($msg);
         }
         if ($this->pubKey == '' || $this->priKey == '') {
             $msg = "As chaves não estão disponíveis.";
             throw new Exception\InvalidArgumentException($msg);
         }
-        $pkeyid = openssl_get_privatekey($this->privKey);
+        $pkeyid = openssl_get_privatekey($this->priKey);
         // limpeza do xml com a retirada dos CR, LF e TAB
         $order = array("\r\n", "\n", "\r", "\t");
         $replace = '';
@@ -299,16 +298,16 @@ class Pkcs12
         $dados = $node->C14N(false, false, null, null);//extrai os dados da tag para uma string
         $hashValue = hash('sha1', $dados, true);//calcular o hash dos dados
         $digValue = base64_encode($hashValue);
-        $signatureNode = $xmldoc->createElementNS(URLDSIG, 'Signature');
+        $signatureNode = $xmldoc->createElementNS($this->urlDSIG, 'Signature');
         $root->appendChild($signatureNode);
         $signedInfoNode = $xmldoc->createElement('SignedInfo');
         $signatureNode->appendChild($signedInfoNode);
         $newNode = $xmldoc->createElement('CanonicalizationMethod');
         $signedInfoNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', URLCANONMETH);
+        $newNode->setAttribute('Algorithm', $this->urlCANONMETH);
         $newNode = $xmldoc->createElement('SignatureMethod');
         $signedInfoNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', URLSIGMETH);
+        $newNode->setAttribute('Algorithm', $this->urlSIGMETH);
         $referenceNode = $xmldoc->createElement('Reference');
         $signedInfoNode->appendChild($referenceNode);
         $referenceNode->setAttribute('URI', '#'.$idNfe);
@@ -316,13 +315,13 @@ class Pkcs12
         $referenceNode->appendChild($transformsNode);
         $newNode = $xmldoc->createElement('Transform');
         $transformsNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', URLTRANSFMETH1);
+        $newNode->setAttribute('Algorithm', $this->urlTRANSFMETH1);
         $newNode = $xmldoc->createElement('Transform');
         $transformsNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', URLTRANSFMETH2);
+        $newNode->setAttribute('Algorithm', $this->urlTRANSFMETH2);
         $newNode = $xmldoc->createElement('DigestMethod');
         $referenceNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', URLDIGESTMETH);
+        $newNode->setAttribute('Algorithm', $this->urlDIGESTMETH);
         $newNode = $xmldoc->createElement('DigestValue', $digValue);
         $referenceNode->appendChild($newNode);
         // extrai os dados a serem assinados para uma string
