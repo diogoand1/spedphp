@@ -1,6 +1,8 @@
 SPEDPHP    Versão: 0.0.1-dev  
 =========================
-  
+
+[![Build Status](https://travis-ci.org/nfephp-org/nfephp.png?branch=master)](https://travis-ci.org/nfephp-org/nfephp)
+
 Este é o repositorio para o desenvolvimento e refatoração da API NFePHP.
 
 #**Atenção :**
