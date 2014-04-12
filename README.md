@@ -2,6 +2,7 @@ SPEDPHP    Versão: 0.0.1-dev
 =========================
 
 [![Build Status](https://travis-ci.org/nfephp-org/spedphp.png?branch=master)](https://travis-ci.org/nfephp-org/spedphp)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nfephp-org/spedphp/badges/quality-score.png?s=da1850d5db48c0ebfdbc6d1842b95cc31abd9e39)](https://scrutinizer-ci.com/g/nfephp-org/spedphp/)
 
 Este é o repositorio para o desenvolvimento e refatoração da API NFePHP.
 
