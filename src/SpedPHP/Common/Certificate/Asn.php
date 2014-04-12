@@ -126,7 +126,6 @@ class Asn
         $abBinary = array();
         //coloca cada parte do numero do OID em uma linha da matriz
         $partes = explode('.', $oid);
-        $num = 0;
         $bun = 0;
         //para cada numero compor o valor asc do mesmo
         for ($num = 0; $num < count($partes); $num++) {
@@ -139,7 +138,7 @@ class Asn
                     $abBinary = self::xBase128($abBinary, $partes[$num], 1);
             }
         }
-        $value =chr(0x06) . chr(count($abBinary));
+        $value = chr(0x06) . chr(count($abBinary));
         //para cada item da matriz compor a string de retorno como caracter
         foreach ($abBinary as $item) {
             $value .= chr($item);
