@@ -25,7 +25,7 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         $ignorevalidity = false;
         $ignoreowner = false;
         $result = array();
-        $pkcs = new Certificate\Pkcs12($dir, $cnpj);
+        $pkcs = new Pkcs12($dir, $cnpj);
         try {
             $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
         } catch (\Exception $e) {
