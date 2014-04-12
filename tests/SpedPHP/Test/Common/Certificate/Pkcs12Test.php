@@ -25,25 +25,35 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         $ignorevalidity = false;
         $ignoreowner = false;
         $result = array();
-        $pkcs = new Pkcs12($dir, $cnpj);
+        
+        
+        
         try {
+            $pkcs = new Pkcs12($dir, $cnpj);
             $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
         } catch (\Exception $e) {
             $result[0] = $e->getMessage();
         }
+        $pkcs = null;
+        
         $cnpj = '1111111111111';
         $ignorevalidity = true;
         try {
+            $pkcs = new Pkcs12($dir, $cnpj);
             $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
         } catch (\Exception $e) {
             $result[1] = $e->getMessage();
         }
-        $ignoreowner = false;
+        $pkcs = null;
+        
+        $ignoreowner = true;
         try {
+            $pkcs = new Pkcs12($dir, $cnpj);
             $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
         } catch (\Exception $e) {
             $result[2] = $e->getMessage();
         }
+        
         $this->assertEquals($result[0], 'Data de validade vencida! [Valido até 23/05/13]');
         $this->assertEquals($result[1], 'O Certificado fornecido pertence a outro CNPJ!!');
         $this->assertEquals($result[2], true);
