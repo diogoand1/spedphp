@@ -17,11 +17,11 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
     
     public function testloadNewCertCert()
     {
-        $dir = '';
+        $dir = './';
         $keyPass = '1234';
         $cnpj='58716523777119';
         $pfxName = 'certificado.pfx';
-        $createpemfiles = true;
+        $createpemfiles = false;
         $ignorevalidity = false;
         $ignoreowner = false;
         $result = array();
