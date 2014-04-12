@@ -22,16 +22,18 @@ class NatSoap
     public $soapTimeout = 10;
     public $aError = array();
     public $pathWsdl = '';
+    
+    protected $enableSVAN = false;
+    protected $enableSVRS = false;
+    protected $enableSVCAN = false;
+    protected $enableSVCRS = false;
+    protected $enableSCAN = false; //será desativado em 12/2014
    
     private $certKEY;
     private $pubKEY;
     private $priKEY;
     
-    private $proxyIP = '';
-    private $proxyPORT = '';
-    private $proxyUSER = '';
-    private $proxyPASS = '';
-    
+       
     /**
      * 
      * @param type $publicKey
@@ -46,7 +48,7 @@ class NatSoap
     public function __construct($publicKey = '', $privateKey = '', $certificateKey = '', $pathWsdl = '', $timeout = 10)
     {
         try {
-            if ($certificateKey == '' || $privateKey = '' || $publicKey == '') {
+            if ($certificateKey == '' or $privateKey = '' or $publicKey == '') {
                 $msg = 'O path para as chaves deve ser passado na instânciação da classe.';
                 throw new NfephpException($msg);
             }
@@ -83,9 +85,7 @@ class NatSoap
      * @return mixed false se houve falha ou o retorno em xml do SEFAZ
      */
     public function send(
-        $UF = '',
-        $SVAN = false,
-        $SCAN = false,
+        $siglaUF = '',
         $namespace = '',
         $cabecalho = '',
         $dados = '',
@@ -97,6 +97,7 @@ class NatSoap
                 $msg = "A classe SOAP não está disponível no PHP, veja a configuração.";
                 throw new NfephpException($msg);
             }
+            $soapFault = '';
             //ativa retorno de erros soap
             use_soap_error_handler(true);
             //versão do SOAP
@@ -107,15 +108,26 @@ class NatSoap
                 $ambiente = 'homologacao';
             }
             $usef = "_$metodo.asmx";
-            $urlsefaz = "$this->pathWsdl/$ambiente/$UF$usef";
+            $urlsefaz = "$this->pathWsdl/$ambiente/$siglaUF$usef";
             if ($this->enableSVAN) {
                 //se for SVAN montar o URL baseado no metodo e ambiente
                 $urlsefaz = "$this->pathWsdl/$ambiente/SVAN$usef";
             }
-            //verificar se SCAN ou SVAN
             if ($this->enableSCAN) {
                 //se for SCAN montar o URL baseado no metodo e ambiente
                 $urlsefaz = "$this->pathWsdl/$ambiente/SCAN$usef";
+            }
+            if ($this->enableSVRS) {
+                //se for SVRS montar o URL baseado no metodo e ambiente
+                $urlsefaz = "$this->pathWsdl/$ambiente/SVRS$usef";
+            }
+            if ($this->enableSVCAN) {
+                //se for SVCAN montar o URL baseado no metodo e ambiente
+                $urlsefaz = "$this->pathWsdl/$ambiente/SVCAN$usef";
+            }
+            if ($this->enableSVCRS) {
+                //se for SVCRS montar o URL baseado no metodo e ambiente
+                $urlsefaz = "$this->pathWsdl/$ambiente/SVCRS$usef";
             }
             if ($this->soapTimeout == 0) {
                 $tout = 999999;

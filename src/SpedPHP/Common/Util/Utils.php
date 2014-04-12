@@ -27,6 +27,7 @@ class Utils
      */
     public function dirListFiles($dir = '', $fileMatch = '', $retPath = false)
     {
+        $aName = array();
         if (trim($fileMatch) != '' && trim($dir) != '') {
             //passar o padrão para minúsculas
             $fileMatch = strtolower($fileMatch);

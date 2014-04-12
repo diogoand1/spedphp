@@ -109,6 +109,7 @@ class ModulesCheck
      */
     public function listModules()
     {
+        $onlyModules = array();
         // Loop through modules
         foreach ($this->Modules as $moduleName => $values) {
             // $moduleName is the key of $this->Modules, which is also module name

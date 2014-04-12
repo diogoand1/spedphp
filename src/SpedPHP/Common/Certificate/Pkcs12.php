@@ -4,6 +4,7 @@ namespace SpedPHP\Common\Certificate;
 
 use SpedPHP\Common\Certificate\Asn;
 use SpedPHP\Common\Exception;
+use DOMDocument;
 
 /**
  * @category   SpedPHP
@@ -268,7 +269,7 @@ class Pkcs12
         libxml_use_internal_errors(true); // Habilita a manipulaçao de erros da libxml
         libxml_clear_errors(); //limpar erros anteriores que possam estar em memória
         $xmldoc = new \DOMDocument('1.0', 'utf-8');// carrega o documento no DOM
-        $xmldoc->preservWhiteSpace = false; //elimina espaços em branco
+        $xmldoc->preserveWhiteSpace = false; //elimina espaços em branco
         $xmldoc->formatOutput = false;
         if ($xmldoc->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG)) {
             $root = $xmldoc->documentElement;
