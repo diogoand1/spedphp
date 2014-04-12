@@ -14,7 +14,7 @@ class Element extends \DOMElement
 
     /**
      *
-     * @return \SpedPHP\Components\Xml\NodeIterator
+     * @return \SpedPHP\Common\Components\Xml\NodeIterator
      */
     public function getIterator()
     {
@@ -108,9 +108,9 @@ class Element extends \DOMElement
     public function removeElementsByTagName($name)
     {
         $nodes = $this->getElementsByTagName($name);
-        foreach ($nodes as $node)
+        foreach ($nodes as $node) {
             $this->removeChild($node);
-
+        }
         return true;
     }
 
@@ -135,8 +135,8 @@ class Element extends \DOMElement
                 $testNode = $parentNode->childNodes->item($nodeIndex);
 
                 if ($testNode->nodeName == $node->nodeName
-                    AND $testNode->parentNode->isSameNode($node->parentNode)
-                        AND $testNode->childNodes->length > 0
+                    and $testNode->parentNode->isSameNode($node->parentNode)
+                    and $testNode->childNodes->length > 0
                 ) {
                     $nodeTagIndex++;
                 }

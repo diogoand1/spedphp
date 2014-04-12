@@ -26,7 +26,7 @@ class Document extends \DOMDocument
     public function __construct()
     {
         parent::__construct('1.0', 'UTF-8');
-        parent::registerNodeClass('\DOMElement', '\SpedPHP\Components\Xml\Element');
+        parent::registerNodeClass('\DOMElement', '\SpedPHP\Common\Components\Xml\Element');
     }
 
     /**
@@ -112,7 +112,7 @@ class Document extends \DOMDocument
             return $node->nodeValue;
         }
 
-        return NULL;
+        return null;
     }
 
     /**
