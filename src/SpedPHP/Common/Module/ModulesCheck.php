@@ -1,17 +1,16 @@
 <?php
 
-/**
- * Spedphp (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @package   Spedphp
- */
-
 namespace SpedPHP\Common\Module;
 
-//classe de verificação dos modulos instalados no PHP
+/**
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Module
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
+ */
+
 class ModulesCheck
 {
 
@@ -67,18 +66,25 @@ class ModulesCheck
         $this->Modules = $vModules;
     }
 
-    // Quick check if module is loaded
-    // Returns true if loaded, false if not
+    /**
+     * Verifica se o modulo php está carregado
+     * @param type $moduleName
+     * @return boolean
+     */
     public function isLoaded($moduleName)
     {
         if ($this->Modules[$moduleName]) {
             return true;
         }
         return false;
-    } // End function isLoaded
+    }
 
-    // Get a module setting
-    // Can be a single setting by specifying $setting value or all settings by not specifying $setting value
+    /**
+     * Obtêm o set do modulo
+     * @param type $moduleName
+     * @param type $setting
+     * @return string
+     */
     public function getModuleSetting($moduleName, $setting = '')
     {
         // check if module is loaded before continuing
@@ -95,9 +101,12 @@ class ModulesCheck
         }
         // If setting specified and no value found return error
         return 'Setting not found';
-    } // End function getModuleSetting
-
-    // List all php modules installed with no settings
+    }
+    
+    /**
+     * Lista todos os modulos instalados
+     * @return type
+     */
     public function listModules()
     {
         // Loop through modules
@@ -109,5 +118,5 @@ class ModulesCheck
         $qqc = '';
         // Return array of all module names
         return $onlyModules;
-    } // End function listModules();
-}//fim da classe
+    }
+}

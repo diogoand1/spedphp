@@ -1,27 +1,16 @@
 <?php
 
-/**
- * NFePHP (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/nfephp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   LGPL v3
- * @license   GPL v3
- * @package   NFePHP
- */
-
 namespace SpedPHP\Common\Exception;
 
 /**
- * Classe complementar 
- * necessária para extender a classe base Exception
- * Usada no tratamento de erros da API
- * 
- * @version 1.1.0
- * @package NFePHP
- * @name nfephpException
- * 
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Exception
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
 class NfephpException extends \Exception
 {
     

@@ -1,15 +1,15 @@
 <?php
 
-/**
- * Spedphp (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @package   Spedphp
- */
-
 namespace SpedPHP\Common\Soap;
+
+/**
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Soap
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
+ */
 
 class CurlSoap
 {
@@ -162,7 +162,6 @@ class CurlSoap
     } //fim send
 
     /**
-     * getWsdl
      * Baixa o arquivo wsdl do webservice
      * 
      * @param string $urlsefaz
@@ -185,7 +184,6 @@ class CurlSoap
     }//fim getWsdl
 
     /**
-     * commCurl
      * Realiza da comunicação via cURL
      * 
      * @param string $url

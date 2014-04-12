@@ -1,27 +1,24 @@
 <?php
-/*
- * NFePHP (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/nfephp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL v.3
- * @package   NFePHP
- */
 
 namespace SpedPHP\Common\Util;
 
 use SpedPHP\Common\Exception;
 
 /**
- * 
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Util
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
 class Utils
 {
 
     /**
-     * Método para obter todo o conteúdo de um diretorio, e
-     * que atendam ao critério indicado.
+     * Método para obter todo o conteúdo de um diretorio
+     * e que atendam ao critério indicado.
      * 
      * @param string $dir Diretorio a ser pesquisado
      * @param string $fileMatch critério de seleção pode ser usados coringas como *-nfe.xml
@@ -52,8 +49,15 @@ class Utils
         }//endif
         sort($aName);
         return $aName;
-    } //fim listDir
+    }
 
+    /**
+     * Lista os arquivos de um diretorio
+     * @param type $diretorio
+     * @param type $fileMatch
+     * @param type $retPath
+     * @return type
+     */
     private function dirGetFiles($diretorio, $fileMatch, $retPath = false)
     {
         //abra o diretório
@@ -81,24 +85,6 @@ class Utils
     }
   
     /**
-     * splitLines
-     * Divide a string do certificado publico em linhas com 76 caracteres (padrão original)
-     * 
-     * @name splitLines
-     * @param string $cnt certificado
-     * @return string certificado reformatado 
-     */
-    public static function splitLines($cnt = '')
-    {
-        if ($cnt != '') {
-            $cnt = rtrim(chunk_split(str_replace(array("\r", "\n"), '', $cnt), 76, "\n"));
-        }
-        return $cnt;
-    }//fim splitLines
-    
-    
-    /**
-     * cleanString
      * Remove todos dos caracteres especiais, simbolos e acentos
      *  
      * @name cleanString

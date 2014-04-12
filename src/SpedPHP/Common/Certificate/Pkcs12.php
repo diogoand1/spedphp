@@ -1,18 +1,18 @@
 <?php
 
-/**
- * Spedphp (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @package   Spedphp
- */
-
 namespace SpedPHP\Common\Certificate;
 
 use SpedPHP\Common\Certificate\Asn;
 use SpedPHP\Common\Exception;
+
+/**
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Certificate
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
+ */
 
 class Pkcs12
 {
@@ -38,7 +38,6 @@ class Pkcs12
     const URLDIGESTMETH = 'http://www.w3.org/2000/09/xmldsig#sha1';
     
     /**
-     * __construct
      * Método de construção da classe
      * @param string $dir Path para a pasta que contêm os certificados digitais
      * @param string $cnpj CNPJ do emitente, sem  ./-, apenas os numeros
@@ -68,10 +67,9 @@ class Pkcs12
         }
         $this->cnpj = trim($cnpj);
         $this->init($flagCert);
-    }//fim __construct
+    }
     
     /**
-     * init
      * Método de inicialização da classe irá verificar 
      * os parâmetros, arquivos e validade dos mesmos
      * Em caso de erro o motivo da falha será indicada na parâmetro
@@ -130,11 +128,9 @@ class Pkcs12
     }//fim init
 
     /**
-     * removePemFiles
      * Apaga os arquivos PEM do diretório
      * Isso deve ser feito quando um novo certificado é carregado
      * ou quando a validade do certificado expirou.
-     * 
      */
     private function removePemFiles()
     {
@@ -147,12 +143,10 @@ class Pkcs12
         if (is_file($this->certKeyFile)) {
             unlink($this->certKeyFile);
         }
-    }//fim removePemFiles
+    }
     
     /**
-     * leaveParam
      * Limpa os parametros da classe
-     * 
      */
     private function leaveParam()
     {
@@ -164,12 +158,11 @@ class Pkcs12
         $this->priKeyFile='';
         $this->certKeyFile='';
         $this->expireTimestamp='';
-    }// fim leaveParam
+    }
     
     /**
-     * loadNewCert
-     * Carrega um novo certificado no formato PFX, isso deverá 
-     * ocorrer a cada atualização do certificado digital, ou seja,
+     * Carrega um novo certificado no formato PFX
+     * Isso deverá ocorrer a cada atualização do certificado digital, ou seja,
      * pelo menos uma vez por ano, uma vez que a validade do certificado 
      * é anual.
      * Será verificado também se o certificado pertence realmente ao CNPJ
@@ -239,12 +232,10 @@ class Pkcs12
         $this->priKey=$x509certdata['pkey'];
         $this->certKey=$x509certdata['pkey']."\r\n".$x509certdata['cert'];
         return true;
-    } //fim loadCerts
+    }
     
     /**
-     * signXML
      * Método que provê a assinatura do xml
-     * 
      * @param string $docxml Path completo para o xml ou o próprio xml em uma string
      * @param string $tagid TAG a ser assinada
      * @return mixed false em caso de erro ou uma string com o conteudo do xml já assinado
@@ -348,12 +339,10 @@ class Pkcs12
         openssl_free_key($pkeyid);
         //retorna o documento assinado
         return $xml;
-    } //fim signXML
+    }
     
     /**
-     * verifySignature
      * Verifica a validade da assinatura digital contida no xml 
-     * 
      * @param string $xml path para o xml ou o conteudo do mesmo em uma string
      * @param string $tag tag que foi assinada no documento xml
      * @return boolean
@@ -417,10 +406,9 @@ class Pkcs12
             throw new Exception\RuntimeException($msg);
         }
         return true;
-    } // fim verifySignatureXML
+    }
     
     /**
-     * validCerts
      * Verifica a data de validade do certificado digital
      * e compara com a data de hoje.
      * Caso o certificado tenha expirado o mesmo será removido das
@@ -450,12 +438,11 @@ class Pkcs12
             return false;
         }
         return true;
-    } //fim validCerts
+    }
     
     /**
-     * cleanCerts
-     * Remove a informação de inicio e fim do certificado contido no 
-     * formato PEM, deixando o certificado (chave publica) pronta para ser
+     * Remove a informação de inicio e fim do certificado
+     * contido no formato PEM, deixando o certificado (chave publica) pronta para ser
      * anexada ao xml da NFe
      * 
      * @return string
@@ -477,13 +464,11 @@ class Pkcs12
             }
         }
         return $data;
-    }//fim cleanCerts
+    }
     
     /**
-     * splitLines
-     * Divide a string do certificado publico em linhas com 
-     * 76 caracteres (padrão original)
-     * 
+     * Divide a string do certificado publico em linhas
+     * com 76 caracteres (padrão original)
      * @name splitLines
      * @param string $cnt certificado
      * @return string certificado reformatado 
@@ -494,5 +479,5 @@ class Pkcs12
             $cnt = rtrim(chunk_split(str_replace(array("\r", "\n"), '', $cnt), 76, "\n"));
         }
         return $cnt;
-    }//fim splitLines
-}//fim da classe
+    }
+}

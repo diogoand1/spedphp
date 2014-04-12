@@ -1,18 +1,17 @@
 <?php
 
-/**
- * Spedphp (http://www.nfephp.org/)
- *
- * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
- * @copyright Copyright (c) 2008-2013 NFePHP (http://www.nfephp.org)
- * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL v.3
- * @package   Spedphp
- */
-
 namespace SpedPHP\Common\Components\Xml;
 
 use SpedPHP\Common\Exception;
+
+/**
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Components/Xml
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
+ */
 
 class XmlValidate
 {
@@ -20,8 +19,7 @@ class XmlValidate
     public $aError = array();
     
     /**
-     * validXML
-     * Verifica o xml com base no xsd
+     * Verifica a validade do xml com base no xsd
      * Esta função pode validar qualquer arquivo xml do sistema de NFe
      * Há um bug no libxml2 para versões anteriores a 2.7.3
      * que causa um falso erro na validação da NFe devido ao
@@ -152,4 +150,4 @@ class XmlValidate
         }
         return true;
     } //fim validXML
-}//fim da classe xmlValidate
+}

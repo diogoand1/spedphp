@@ -7,9 +7,14 @@ use SpedPHP\Common\Exception;
 use LSS\XML2Array;
 
 /**
- * Esta classe trata os wsdl para comunicação com os webservices 
- *
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Soap
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
 class Wsdl
 {
     public $soapDebug='';

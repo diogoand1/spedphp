@@ -18,8 +18,8 @@ class Asn
     protected static $len = 0;
     
     /**
-     * getCNPJCert
-     * Obtem o CNPJ do certificado digital
+     * Obtêm o numero de CNPJ da chave publica do Certificado (A1)
+     * 
      * @param string $cert_pem conteudo do certificado 
      * @return string CNPJ
      */

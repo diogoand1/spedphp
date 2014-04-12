@@ -7,10 +7,12 @@ use SpedPHP\Common\Certificate\Asn;
 /**
  * @category   SpedPHP
  * @package    SpedPHP\Test\Common\Certificate
- * @copyright  Copyright (c) 2013
- * @license    http://www.gnu.org/licenses/lgpl.html GNU/LGPL v.3
- * @author     Roberto L. Machado <linux.rlm@gmail.com>
+ * @copyright  Copyright (c) 2008-2014
+ * @license   http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link      http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
 class AsnTest extends \PHPUnit_Framework_TestCase
 {
 
