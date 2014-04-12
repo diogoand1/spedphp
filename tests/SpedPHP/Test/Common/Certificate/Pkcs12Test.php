@@ -17,7 +17,7 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
     
     public function testloadNewCertCert()
     {
-        $dir = './';
+        $dir = dirname(__FILE__);
         $keyPass = '1234';
         $cnpj='58716523777119';
         $pfxName = 'certificado.pfx';
@@ -25,8 +25,6 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         $ignorevalidity = false;
         $ignoreowner = false;
         $result = array();
-        
-        
         
         try {
             $pkcs = new Pkcs12($dir, $cnpj);
@@ -36,7 +34,7 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         }
         $pkcs = null;
         
-        $cnpj = '1111111111111';
+        $cnpj = '12345678901234';
         $ignorevalidity = true;
         try {
             $pkcs = new Pkcs12($dir, $cnpj);
@@ -49,9 +47,9 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         $ignoreowner = true;
         try {
             $pkcs = new Pkcs12($dir, $cnpj);
-            $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
+            $result[2] = $pkcs->loadNewCert($pfxName, $keyPass, $createpemfiles, $ignorevalidity, $ignoreowner);
         } catch (\Exception $e) {
-            $result[2] = $e->getMessage();
+            echo $e->getMessage();
         }
         
         $this->assertEquals($result[0], 'Data de validade vencida! [Valido até 23/05/13]');
