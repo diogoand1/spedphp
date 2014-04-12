@@ -139,7 +139,6 @@ class NFe
         } else {
             $ambiente = 'homologacao';
         }
-        $returnSoap = false;
         //recupera o numero da SEFAZ
         $cUF = $this->cUFlist[$sigla];
         //recupera os dados de acesso a SEFAZ
@@ -171,7 +170,6 @@ class NFe
         } else {
             $returnSoap = false;
         }
-        
         if ($returnSoap === false) {
             //houve alguma falha na comunicaçao
             throw new Exception\RuntimeException($soap->error);
@@ -286,7 +284,7 @@ class NFe
     
     protected function loadSefaz($sigla, $ambiente)
     {
-        $aURL = array();
+        $aUrl = array();
         $xml = simplexml_load_file(PATH_ROOT.$this->nfeWs);
         //extrai a variável cUF do lista
         $alias = $this->aliaslist[$sigla];
