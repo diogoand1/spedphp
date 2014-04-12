@@ -11,21 +11,6 @@
             "email": "linux.rlm@gmail.com.br",
             "homepage": "http://www.nfephp.org",
             "role": "Developer"
-        },{
-            "name": "Antonio Spinelli",
-            "email": "tonicopinelli85@gmail.com",
-            "homepage": "http://www.nfephp.org",
-            "role": "Developer"
-        },{
-            "name": "Walker Alencar",
-            "email": "walkeralencar@gmail.com",
-            "homepage": "http://www.nfephp.org",
-            "role": "Developer"
-        },{
-            "name": "Andreus Timm",
-            "email": "andreus.timm@gmail.com",
-            "homepage": "http://www.nfephp.org",
-            "role": "Developer"
         }
     ],
     "require": {
@@ -41,15 +26,10 @@
         "ext-openssl": "*",
         "ext-zip": "*",
         "ext-zlib": "*",
-        "apigen/apigen": ">=2.8.0",
         "phpunit/phpunit": "3.7.*",
         "openlss/lib-array2xml": "dev-master",
-        "zendframework/zendpdf": ">=2.0.2",
-        "zendframework/zend-barcode": ">=2.1.5",
-        "zendframework/zend-mail": ">=2.1.5",
         "ensepar/tcpdf": "dev-master",
         "phpmailer/phpmailer": ">=v5.2.6",
-        "tonicospinelli/classgeneration": ">=1.0.0",
         "endroid/qrcode": "dev-master"
     },
     "require-dev": {

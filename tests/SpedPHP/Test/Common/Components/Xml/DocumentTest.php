@@ -1,6 +1,6 @@
 <?php
 
-namespace SpedPHP\Test\Components\Xml;
+namespace SpedPHP\Test\Common\Components\Xml;
 
 use SpedPHP\Common\Components\Xml\Document;
 
@@ -18,7 +18,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
     {
         $document = new Document();
         $this->assertInstanceOf('DOMDocument', $document);
-        $this->assertInstanceOf('SpedPHP\Components\Xml\Document', $document);
+        $this->assertInstanceOf('SpedPHP\Common\Components\Xml\Document', $document);
     }
 
     public function testCreateAndAppendChildInDocument()
@@ -171,7 +171,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
                     'author'             => 'Author0',
                     'title'              => 'Title0',
                     'title'              => 'Title0',
-                    Document::ATTRIBUTES => Array(
+                    Document::ATTRIBUTES => array(
                         'isbn' => "978-3-16-148410-0"
                     )
                 ),
@@ -179,7 +179,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
                     'author'             => array('Author1', 'Author2'),
                     'title'              => 'Title0',
                     'title'              => 'Title0',
-                    Document::ATTRIBUTES => Array(
+                    Document::ATTRIBUTES => array(
                         'isbn' => "978-3-16-148410-0"
                     )
                 ),
@@ -188,7 +188,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
                     'title'              => array(
                         Document::CONTENT => 'Title0'
                     ),
-                    Document::ATTRIBUTES => Array(
+                    Document::ATTRIBUTES => array(
                         'isbn' => "978-3-16-148410-0"
                     )
                 ),
@@ -273,7 +273,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
         $data = array(
             'book' => array(
                 array(
-                    Document::ATTRIBUTES => Array(
+                    Document::ATTRIBUTES => array(
                         'isbn' => "978-3-16-148410-0"
                     ),
                     'author'             => array(
@@ -284,7 +284,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    Document::ATTRIBUTES => Array(
+                    Document::ATTRIBUTES => array(
                         'isbn' => "978-3-16-148410-0"
                     ),
                     'author'             => array(
@@ -296,7 +296,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    Document::ATTRIBUTES => Array(
+                    Document::ATTRIBUTES => array(
                         'isbn' => "978-3-16-148410-0"
                     ),
                     'author'             => array(
