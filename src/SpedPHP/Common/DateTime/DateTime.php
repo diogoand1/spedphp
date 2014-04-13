@@ -18,9 +18,9 @@ class DateTime
      * @param type $dhs
      * @return string
      */
-    public static function st2uts($dhs)
+    public static function st2uts($dhs = '')
     {
-        if ($dhs) {
+        if ($dhs != '') {
             $aDH = explode('T', $dhs);
             $adDH = explode('-', $aDH[0]);
             $atDH = explode(':', $aDH[1]);
