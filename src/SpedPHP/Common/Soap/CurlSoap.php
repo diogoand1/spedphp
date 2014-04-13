@@ -19,8 +19,8 @@ class CurlSoap
     
     private $errorCurl = '';
     private $infoCurl = array();
-    private $pubKEY;
-    private $priKEY;
+    private $pubKEY = '';
+    private $priKEY = '';
     private $proxyIP = '';
     private $proxyPORT = '';
     private $proxyUSER = '';
@@ -191,7 +191,7 @@ class CurlSoap
      * @param string $parametros
      * @return string
      */
-    private function commCurl($url, $data = '', $parametros = '')
+    private function commCurl($url, $data = '', $parametros = array())
     {
         //incializa cURL
         $oCurl = curl_init();
@@ -220,7 +220,7 @@ class CurlSoap
             curl_setopt($oCurl, CURLOPT_POST, 1);
             curl_setopt($oCurl, CURLOPT_POSTFIELDS, $data);
         }
-        if ($parametros != '') {
+        if (!empty($parametros)) {
             curl_setopt($oCurl, CURLOPT_HTTPHEADER, $parametros);
         }
         //inicia a conexão
