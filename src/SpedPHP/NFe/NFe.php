@@ -167,6 +167,7 @@ class NFe
             $soap = new Soap\CurlSoap($this->oPkcs12->priKeyFile, $this->oPkcs12->pubKeyFile);
             $returnSoap = $soap->send($urlservico, $namespace, $cabec, $dados, $metodo);
             $this->soapDebug = $soap->soapDebug;
+            $soap = null;
         } else {
             $returnSoap = false;
         }
@@ -174,7 +175,6 @@ class NFe
             //houve alguma falha na comunicaçao
             throw new Exception\RuntimeException($soap->error);
         }
-        $soap = null;
         //tratar dados de retorno
         $doc = new \DOMDocument('1.0', 'utf-8'); //cria objeto DOM
         $doc->formatOutput = false;
