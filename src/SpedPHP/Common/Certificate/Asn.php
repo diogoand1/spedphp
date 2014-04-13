@@ -42,10 +42,10 @@ class Asn
         $begin = "CERTIFICATE-----";
         $end = "-----END";
         //extrai o conteúdo do certificado entre as marcas BEGIN e END
-        $pemData = substr($pemData, strpos($pemData, $begin) + strlen($begin));
-        $pemData = substr($pemData, 0, strpos($pemData, $end));
+        $pemData1 = substr($pemData, strpos($pemData, $begin) + strlen($begin));
+        $pemData2 = substr($pemData1, 0, strpos($pemData1, $end));
         //converte o resultado para binário obtendo um certificado em formato DER
-        $derData = base64_decode($pemData);
+        $derData = base64_decode($pemData2);
         return $derData;
     }//fim pem2Der
     
@@ -97,7 +97,7 @@ class Asn
                 //a parte do certificado com o OID
                 $data = $xcv . $oidHexa . $partes[$i];
                 //converte para decimal, o segundo digito da sequencia
-                $len = ord($data[1]);
+                $len = (integer) ord($data[1]);
                 $bytes = 0;
                 // obtem tamanho da parte de dados da oid
                 self::getLength($len, $bytes, $data);
