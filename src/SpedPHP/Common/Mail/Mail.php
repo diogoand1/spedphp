@@ -1,17 +1,18 @@
 <?php
+namespace SpedPHP\Common\Mail;
 
-namespace SpedPHP\NFe\Danfce;
+use SpedPHP\Common\Exception;
 
 /**
- * Classe para impressão do Documento Auxiliar da Nota Fiscal Eletrônica ao Consumidor NFCe
+ * Classe de auxilio no envo de emails
  * @category   SpedPHP
- * @package    SpedPHP\NFe\Danfce
+ * @package    SpedPHP\Common\Mail
  * @copyright  Copyright (c) 2008-2014
  * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
  * @author     Roberto L. Machado <linux.rlm@gamil.com>
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
 
-class Danfce
+class Mail
 {
 }

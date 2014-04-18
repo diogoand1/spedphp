@@ -205,7 +205,10 @@ class NFe
         $response['tMed'] = $doc->getElementsByTagName('tMed')->item(0)->nodeValue;
         // data e hora do retorno a operação (opcional)
         $response['dhRetorno'] = !empty($doc->getElementsByTagName('dhRetorno')->item(0)->nodeValue) ?
-            date("d/m/Y H:i:s", DateTime::st2uts((string) $doc->getElementsByTagName('dhRetorno')->item(0)->nodeValue)) :
+            date(
+                "d/m/Y H:i:s",
+                DateTime::st2uts((string) $doc->getElementsByTagName('dhRetorno')->item(0)->nodeValue)
+            ) :
             '';
         // data e hora da mensagem (opcional)
         $response['dhRecbto'] = !empty($doc->getElementsByTagName('dhRecbto')->item(0)->nodeValue) ?

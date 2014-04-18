@@ -5,6 +5,7 @@ namespace SpedPHP\Common\Util;
 use SpedPHP\Common\Exception;
 
 /**
+ * Classe auxiliar com algumas funções utilitárias de uso comum da API
  * @category   SpedPHP
  * @package    SpedPHP\Common\Util
  * @copyright  Copyright (c) 2008-2014
@@ -28,9 +29,12 @@ class Utils
     public function dirListFiles($dir = '', $fileMatch = '', $retPath = false)
     {
         $aName = array();
+        $diretorio = '';
+        $oldDir = '';
+        $fMatch = '';
         if (trim($fileMatch) != '' && trim($dir) != '') {
             //passar o padrão para minúsculas
-            $fileMatch = strtolower($fileMatch);
+            $fMatch = \strtolower(\trim($fileMatch));
             //guarda o diretorio atual
             $oldDir = getcwd().DIRECTORY_SEPARATOR;
             //verifica se o parametro $dir define um diretorio real
@@ -39,11 +43,11 @@ class Utils
                 chdir($dir);
                 //pegue o diretorio
                 $diretorio = getcwd().DIRECTORY_SEPARATOR;
-                if (strtolower($dir) != strtolower($diretorio)) {
+                if (\strtolower($dir) != \strtolower($diretorio)) {
                     $msg = "Falha! sem permissão de leitura no diretorio escolhido.";
                     throw new Exception\NfephpException($msg);
                 }
-                $aName = $this->dirGetFiles($diretorio, $fileMatch, $retPath);
+                $aName = $this->dirGetFiles((string) $diretorio, (string) $fMatch, (boolean) $retPath);
                 //volte para o diretorio anterior
                 chdir($oldDir);
             }//endif do teste se é um diretorio
@@ -61,6 +65,7 @@ class Utils
      */
     private function dirGetFiles($diretorio, $fileMatch, $retPath = false)
     {
+        $aName = array();
         //abra o diretório
         $ponteiro  = opendir($diretorio);
         // monta os vetores com os itens encontrados na pasta
@@ -68,7 +73,7 @@ class Utils
             //procure se não for diretorio
             if ($file != "." && $file != "..") {
                 if (!is_dir($file)) {
-                    $tfile = strtolower($file);
+                    $tfile = \strtolower($file);
                     //é um arquivo então
                     //verifique se combina com o $fileMatch
                     if (fnmatch($fileMatch, $tfile)) {

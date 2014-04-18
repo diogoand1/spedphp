@@ -179,8 +179,13 @@ class Pkcs12
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      */
-    public function loadNewCert($pfxName, $keyPass = '', $createFiles = true, $ignorevalidity = false, $ignoreowner = false)
-    {
+    public function loadNewCert(
+        $pfxName,
+        $keyPass = '',
+        $createFiles = true,
+        $ignorevalidity = false,
+        $ignoreowner = false
+    ) {
         //monta o caminho completo até o certificado pfx
         $pfxCert = $this->certsDir.$pfxName;
         if (!is_file($pfxCert)) {
@@ -295,7 +300,7 @@ class Pkcs12
                 "A tag < $tagid > não existe no XML!!"
             );
         }
-        $idNfe = trim($node->getAttribute("Id"));
+        $idNfe = \trim($node->getAttribute("Id"));
         $dados = $node->C14N(false, false, null, null);//extrai os dados da tag para uma string
         $hashValue = hash('sha1', $dados, true);//calcular o hash dos dados
         $digValue = base64_encode($hashValue);

@@ -3,6 +3,7 @@
 namespace SpedPHP\Common\Module;
 
 /**
+ * Classe auxiliar para verificação dos modulos instalados no ambiente PHP
  * @category   SpedPHP
  * @package    SpedPHP\Common\Module
  * @copyright  Copyright (c) 2008-2014
@@ -14,7 +15,7 @@ namespace SpedPHP\Common\Module;
 class ModulesCheck
 {
 
-    public $Modules;
+    public $Modules = array();
 
     public function __construct()
     {
@@ -73,10 +74,7 @@ class ModulesCheck
      */
     public function isLoaded($moduleName)
     {
-        if ($this->Modules[$moduleName]) {
-            return true;
-        }
-        return false;
+        return (bool) $this->Modules[$moduleName];
     }
 
     /**
@@ -109,15 +107,6 @@ class ModulesCheck
      */
     public function listModules()
     {
-        $onlyModules = array();
-        // Loop through modules
-        foreach ($this->Modules as $moduleName => $values) {
-            // $moduleName is the key of $this->Modules, which is also module name
-            $onlyModules[] = $moduleName;
-            $qqc = $values;
-        }
-        $qqc = '';
-        // Return array of all module names
-        return $onlyModules;
+        return array_keys($this->Modules);
     }
 }

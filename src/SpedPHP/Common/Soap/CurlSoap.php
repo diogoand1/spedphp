@@ -3,6 +3,7 @@
 namespace SpedPHP\Common\Soap;
 
 /**
+ * Classe auxiliar para envio das mensagens SOAP usando cURL
  * @category   SpedPHP
  * @package    SpedPHP\Common\Soap
  * @copyright  Copyright (c) 2008-2014
