@@ -7,6 +7,7 @@ use SpedPHP\Common\Exception\NfephpException;
 use LSS\XML2Array;
 
 /**
+ * Classe auxiliar para envio das mensagens SOAP usando SOAP nativo do PHP
  * @category   SpedPHP
  * @package    SpedPHP\Common\Soap
  * @copyright  Copyright (c) 2008-2014
@@ -32,7 +33,6 @@ class NatSoap
     private $certKEY;
     private $pubKEY;
     private $priKEY;
-    
        
     /**
      * 
@@ -65,7 +65,6 @@ class NatSoap
         } catch (NfephpException $e) {
             $this->aError[] = $e->getMessage();
             throw $e;
-            return false;
         }
     }//fim __construct
     
@@ -90,7 +89,7 @@ class NatSoap
         $cabecalho = '',
         $dados = '',
         $metodo = '',
-        $ambiente = '2'
+        $tpAmb = '2'
     ) {
         try {
             if (!class_exists("SoapClient")) {
@@ -102,7 +101,7 @@ class NatSoap
             use_soap_error_handler(true);
             //versão do SOAP
             $soapver = SOAP_1_2;
-            if ($ambiente == 1) {
+            if ($tpAmb == 1) {
                 $ambiente = 'producao';
             } else {
                 $ambiente = 'homologacao';
@@ -135,7 +134,7 @@ class NatSoap
                 $tout = $this->soapTimeout;
             }
             //completa a url do serviço para baixar o arquivo WSDL
-            $URL = $urlsefaz.'?WSDL';
+            $sefazURL = $urlsefaz.'?WSDL';
             $this->soapDebug = $urlsefaz;
             $options = array(
                 'encoding'      => 'UTF-8',
@@ -152,7 +151,7 @@ class NatSoap
                 'cache_wsdl'    => WSDL_CACHE_NONE
             );
             //instancia a classe soap
-            $oSoapClient = new CorrectedSoapClient($URL, $options);
+            $oSoapClient = new CorrectedSoapClient($sefazURL, $options);
             //monta o cabeçalho da mensagem
             $varCabec = new SoapVar($cabecalho, XSD_ANYXML);
             $header = new SoapHeader($namespace, 'nfeCabecMsg', $varCabec);
@@ -172,9 +171,7 @@ class NatSoap
             $this->soapDebug .= "\n" . $oSoapClient->getLastResponseHeaders();
             $this->soapDebug .= "\n" . $oSoapClient->getLastResponse();
         } catch (NfephpException $e) {
-            //$this->setError($e->getMessage());
             throw $e;
-            return false;
         }
         return $resposta;
     } //fim nfeSOAP

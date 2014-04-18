@@ -4,6 +4,7 @@
 namespace SpedPHP\Common\Certificate;
 
 /**
+ * Classe auxiliar para obter informações dos certificados digitais A1 (PKCS12)
  * @category   SpedPHP
  * @package    SpedPHP\Common\Certificate
  * @copyright  Copyright (c) 2008-2014
@@ -97,14 +98,14 @@ class Asn
                 //a parte do certificado com o OID
                 $data = $xcv . $oidHexa . $partes[$i];
                 //converte para decimal, o segundo digito da sequencia
-                $len = (integer) ord($data[1]);
+                $len = ord($data[1]);
                 $bytes = 0;
                 // obtem tamanho da parte de dados da oid
-                self::getLength($len, $bytes, $data);
+                self::getLength((integer) $len, (integer) $bytes, (string) $data);
                 // Obtem o conjunto de bytes pertencentes a oid
                 $oidData = substr($data, 2 + $bytes, $len);
                 //parse dos dados da oid
-                $ret[] =  self::parseASN($oidData);
+                $ret[] =  self::parseASN((string) $oidData);
             }
         }
         return $ret;
@@ -129,13 +130,13 @@ class Asn
         $bun = 0;
         //para cada numero compor o valor asc do mesmo
         for ($num = 0; $num < count($partes); $num++) {
-            if ($num==0) {
+            if ($num == 0) {
                 $bun = 40 * $partes[$num];
-            } elseif ($num==1) {
+            } elseif ($num == 1) {
                 $bun +=  $partes[$num];
                 $abBinary[] = $bun;
             } else {
-                    $abBinary = self::xBase128($abBinary, $partes[$num], 1);
+                $abBinary = self::xBase128($abBinary, $partes[$num], 1);
             }
         }
         $value = chr(0x06) . chr(count($abBinary));

@@ -263,11 +263,11 @@ class CurlSoap
     
     private function limpaMsg($msg)
     {
-        $msg = str_replace(array("\n","\r","\t"), array('','',''), $msg);
-        $msg = str_replace('> ', '>', $msg);
-        if (strpos($msg, '> ')) {
-            $this->limpaMsg($msg);
+        $nmsg = str_replace(array("\n","\r","\t"), array('','',''), $msg);
+        $nnmsg = str_replace('> ', '>', $nmsg);
+        if (strpos($nnmsg, '> ')) {
+            $this->limpaMsg((string) $nnmsg);
         }
-        return $msg;
+        return $nnmsg;
     }//Fim limpaMsg
 }//fim da classe CurlSoap
