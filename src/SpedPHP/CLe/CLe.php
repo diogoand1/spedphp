@@ -9,7 +9,7 @@
  * @package   Spedphp
  */
 
-namespace Spedphp\CLe;
+namespace SpedPHP\CLe;
 
 class CLe
 {
