@@ -20,6 +20,9 @@ class DateTime
      */
     public static function st2uts($dhs = '')
     {
+        if (!is_string($dhs)) {
+            return '';
+        }
         if ($dhs != '') {
             $aDH = explode('T', $dhs);
             $adDH = explode('-', $aDH[0]);
