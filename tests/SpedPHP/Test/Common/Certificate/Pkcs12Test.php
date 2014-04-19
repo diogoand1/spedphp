@@ -77,4 +77,16 @@ class Pkcs12Test extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals($xmlresp, $xmlsigned);
     }
+    
+    public function testverifySignature()
+    {
+        $dir = dirname(__FILE__);
+        $cnpj = '12345678901234';
+        $xmlfilesigned = $dir.DIRECTORY_SEPARATOR.'nfe_signed.xml';
+        $xmlsigned = file_get_contents($xmlfilesigned);
+        $pkcs = new Pkcs12($dir, $cnpj);
+        $resp = $pkcs->verifySignature($xmlsigned, 'infNFe');
+        
+        $this->assertEquals($resp, true);
+    }
 }
