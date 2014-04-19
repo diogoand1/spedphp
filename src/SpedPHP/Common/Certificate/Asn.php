@@ -101,11 +101,11 @@ class Asn
                 $len = ord($data[1]);
                 $bytes = 0;
                 // obtem tamanho da parte de dados da oid
-                self::getLength((integer) $len, (integer) $bytes, (string) $data);
+                self::getLength($len, $bytes, $data);
                 // Obtem o conjunto de bytes pertencentes a oid
                 $oidData = substr($data, 2 + $bytes, $len);
                 //parse dos dados da oid
-                $ret[] =  self::parseASN((string) $oidData);
+                $ret[] =  self::parseASN($oidData);
             }
         }
         return $ret;
