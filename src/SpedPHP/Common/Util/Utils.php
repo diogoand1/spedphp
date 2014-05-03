@@ -29,25 +29,22 @@ class Utils
     public function dirListFiles($dir = '', $fileMatch = '', $retPath = false)
     {
         $aName = array();
-        $diretorio = '';
-        $oldDir = '';
-        $fMatch = '';
         if (trim($fileMatch) != '' && trim($dir) != '') {
             //passar o padrão para minúsculas
-            $fMatch = \strtolower(\trim($fileMatch));
+            $fMatch = (string) strtolower(trim($fileMatch));
             //guarda o diretorio atual
-            $oldDir = getcwd().DIRECTORY_SEPARATOR;
+            $oldDir = (string) getcwd().DIRECTORY_SEPARATOR;
             //verifica se o parametro $dir define um diretorio real
             if (is_dir($dir)) {
                 //mude para o novo diretorio
                 chdir($dir);
                 //pegue o diretorio
-                $diretorio = getcwd().DIRECTORY_SEPARATOR;
-                if (\strtolower($dir) != \strtolower($diretorio)) {
+                $diretorio = (string) getcwd().DIRECTORY_SEPARATOR;
+                if (strtolower($dir) != strtolower($diretorio)) {
                     $msg = "Falha! sem permissão de leitura no diretorio escolhido.";
                     throw new Exception\NfephpException($msg);
                 }
-                $aName = $this->dirGetFiles((string) $diretorio, (string) $fMatch, (boolean) $retPath);
+                $aName = $this->dirGetFiles($diretorio, $fMatch, $retPath);
                 //volte para o diretorio anterior
                 chdir($oldDir);
             }//endif do teste se é um diretorio
@@ -68,24 +65,18 @@ class Utils
         $aName = array();
         //abra o diretório
         $ponteiro  = opendir($diretorio);
+        $compl = '';
+        if ($retPath) {
+            $compl = (string) $diretorio;
+        }
         // monta os vetores com os itens encontrados na pasta
         while (false !== ($file = readdir($ponteiro))) {
             //procure se não for diretorio
-            if ($file != "." && $file != "..") {
-                if (!is_dir($file)) {
-                    $tfile = \strtolower($file);
-                    //é um arquivo então
-                    //verifique se combina com o $fileMatch
-                    if (fnmatch($fileMatch, $tfile)) {
-                        if ($retPath) {
-                            $aName[] = $diretorio.$file;
-                        } else {
-                            $aName[] = $file;
-                        }
-                    }
-                } //endif é diretorio
-            } //endif é  . ou ..
-        }//endwhile
+            if (is_file($file) && fnmatch($fileMatch, strtolower($file))) {
+                //é um arquivo então que atende as condições
+                $aName[] = $compl.$file;
+            }
+        }
         closedir($ponteiro);
         return $aName;
     }
