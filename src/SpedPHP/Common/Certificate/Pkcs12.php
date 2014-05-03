@@ -4,6 +4,7 @@ namespace SpedPHP\Common\Certificate;
 
 /**
  * Classe para tratamento e uso dos certificados digitais modelo A1 (PKCS12)
+ * 
  * @category   SpedPHP
  * @package    SpedPHP\Common\Certificate
  * @copyright  Copyright (c) 2008-2014
@@ -14,48 +15,55 @@ namespace SpedPHP\Common\Certificate;
 
 use SpedPHP\Common\Certificate\Asn;
 use SpedPHP\Common\Exception;
-use DOMDocument;
 
 class Pkcs12
 {
     /**
      * Path para o diretorio onde o arquivo pfx está localizado
+     * 
      * @var string 
      */
     public $certsDir;
     /**
      * Nome do arquivo pfx (certificado digital em formato de transporte)
+     * 
      * @var string
      */
     public $pfxName;
     /**
      * NUmero do CNPJ do emitente
+     * 
      * @var string
      */
     public $cnpj;
     /**
      * String que contêm a chave publica em formato PEM
+     * 
      * @var string 
      */
     public $pubKey;
     /**
      * String quem contêm a chave privada em formato PEM
+     * 
      * @var string
      */
     public $priKey;
     /**
      * String que conten a combinação da chave publica e privada em formato PEM
+     * 
      * @var string
      */
     public $certKey;
     
     /**
      * Path para a chave publica em arquivo
+     * 
      * @var string
      */
     public $pubKeyFile;
     /**
      * Path para a chave privada em arquivo
+     * 
      * @var string
      */
     public $priKeyFile;
@@ -66,11 +74,13 @@ class Pkcs12
     public $certKeyFile;
     /**
      * Timestamp da data de validade do certificado
-     * @var timestamp 
+     * 
+     * @var number
      */
     public $expireTimestamp;
     /**
      * Mensagem de erro da classe
+     * 
      * @var string
      */
     public $error='';
@@ -84,6 +94,7 @@ class Pkcs12
     
     /**
      * Método de construção da classe
+     * 
      * @param string $dir Path para a pasta que contêm os certificados digitais
      * @param string $cnpj CNPJ do emitente, sem  ./-, apenas os numeros
      * @param string $pubKey Chave publica
@@ -120,6 +131,7 @@ class Pkcs12
      * Em caso de erro o motivo da falha será indicada na parâmetro
      * error da classe, os outros parâmetros serão limpos e os 
      * arquivos inválidos serão removidos da pasta
+     * 
      * @param booleam $flagCert indica que as chaves já foram passas como strings
      * @return boolean 
      */
@@ -176,6 +188,7 @@ class Pkcs12
      * Apaga os arquivos PEM do diretório
      * Isso deve ser feito quando um novo certificado é carregado
      * ou quando a validade do certificado expirou.
+     * 
      */
     private function removePemFiles()
     {
@@ -192,6 +205,7 @@ class Pkcs12
     
     /**
      * Limpa os parametros da classe
+     * 
      */
     private function leaveParam()
     {
@@ -244,8 +258,9 @@ class Pkcs12
             );
         }
         //carrega o certificado em um string
-        $pfxContent = file_get_contents($pfxCert);
+        $pfxContent = \file_get_contents($pfxCert);
         //carrega os certificados e chaves para um array denominado $x509certdata
+        $x509certdata = array();
         if (!openssl_pkcs12_read($pfxContent, $x509certdata, $keyPass)) {
             throw new Exception\RuntimeException(
                 "O certificado não pode ser lido!! Senha errada ou arquivo corrompido ou formato inválido!!"
@@ -289,7 +304,8 @@ class Pkcs12
     }
     
     /**
-     * Método que provê a assinatura do xml
+     * Método que provê a assinatura do xml conforme padrão SEFAZ
+     * 
      * @param string $docxml Path completo para o xml ou o próprio xml em uma string
      * @param string $tagid TAG a ser assinada
      * @return mixed false em caso de erro ou uma string com o conteudo do xml já assinado
@@ -327,14 +343,14 @@ class Pkcs12
             throw new Exception\InvalidArgumentException(
                 "Erro ao carregar XML, provavel erro na passagem do parâmetro docxml ou no próprio xml!!"
             );
-            $errors = libxml_get_errors();
+            $errors = \libxml_get_errors();
             if (!empty($errors)) {
                 $eIndex = 1;
                 foreach ($errors as $error) {
                     $msg .= "\n  [$eIndex]-" . trim($error->message);
                     $eIndex++;
                 }
-                libxml_clear_errors();
+                \libxml_clear_errors();
             }
             throw new Exception\RuntimeException($msg);
         }
@@ -347,8 +363,8 @@ class Pkcs12
         }
         $idNfe = \trim($node->getAttribute("Id"));
         $dados = $node->C14N(false, false, null, null);//extrai os dados da tag para uma string
-        $hashValue = hash('sha1', $dados, true);//calcular o hash dos dados
-        $digValue = base64_encode($hashValue);
+        $hashValue = \hash('sha1', $dados, true);//calcular o hash dos dados
+        $digValue = \base64_encode($hashValue);
         $signatureNode = $xmldoc->createElementNS($this->urlDSIG, 'Signature');
         $root->appendChild($signatureNode);
         $signedInfoNode = $xmldoc->createElement('SignedInfo');
@@ -356,47 +372,48 @@ class Pkcs12
         $newNode = $xmldoc->createElement('CanonicalizationMethod');
         $signedInfoNode->appendChild($newNode);
         $newNode->setAttribute('Algorithm', $this->urlCANONMETH);
-        $newNode = $xmldoc->createElement('SignatureMethod');
-        $signedInfoNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', $this->urlSIGMETH);
+        $newNode1 = $xmldoc->createElement('SignatureMethod');
+        $signedInfoNode->appendChild($newNode1);
+        $newNode1->setAttribute('Algorithm', $this->urlSIGMETH);
         $referenceNode = $xmldoc->createElement('Reference');
         $signedInfoNode->appendChild($referenceNode);
         $referenceNode->setAttribute('URI', '#'.$idNfe);
         $transformsNode = $xmldoc->createElement('Transforms');
         $referenceNode->appendChild($transformsNode);
-        $newNode = $xmldoc->createElement('Transform');
-        $transformsNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', $this->urlTRANSFMETH1);
-        $newNode = $xmldoc->createElement('Transform');
-        $transformsNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', $this->urlTRANSFMETH2);
-        $newNode = $xmldoc->createElement('DigestMethod');
-        $referenceNode->appendChild($newNode);
-        $newNode->setAttribute('Algorithm', $this->urlDIGESTMETH);
-        $newNode = $xmldoc->createElement('DigestValue', $digValue);
-        $referenceNode->appendChild($newNode);
+        $newNode2 = $xmldoc->createElement('Transform');
+        $transformsNode->appendChild($newNode2);
+        $newNode2->setAttribute('Algorithm', $this->urlTRANSFMETH1);
+        $newNode3 = $xmldoc->createElement('Transform');
+        $transformsNode->appendChild($newNode3);
+        $newNode3->setAttribute('Algorithm', $this->urlTRANSFMETH2);
+        $newNode4 = $xmldoc->createElement('DigestMethod');
+        $referenceNode->appendChild($newNode4);
+        $newNode4->setAttribute('Algorithm', $this->urlDIGESTMETH);
+        $newNode5 = $xmldoc->createElement('DigestValue', $digValue);
+        $referenceNode->appendChild($newNode5);
         // extrai os dados a serem assinados para uma string
-        $dados = $signedInfoNode->C14N(false, false, null, null);
+        $dados1 = $signedInfoNode->C14N(false, false, null, null);
         $signature = '';
-        openssl_sign($dados, $signature, $pkeyid);
-        $signatureValue = base64_encode($signature);
-        $newNode = $xmldoc->createElement('SignatureValue', $signatureValue);
-        $signatureNode->appendChild($newNode);
+        \openssl_sign($dados1, $signature, $pkeyid);
+        $signatureValue = \base64_encode($signature);
+        $newNode6 = $xmldoc->createElement('SignatureValue', $signatureValue);
+        $signatureNode->appendChild($newNode6);
         $keyInfoNode = $xmldoc->createElement('KeyInfo');
         $signatureNode->appendChild($keyInfoNode);
         $x509DataNode = $xmldoc->createElement('X509Data');
         $keyInfoNode->appendChild($x509DataNode);
         $cert = $this->cleanCerts();
-        $newNode = $xmldoc->createElement('X509Certificate', $cert);
-        $x509DataNode->appendChild($newNode);
-        $xml = $xmldoc->saveXML();
-        openssl_free_key($pkeyid);
+        $newNode7 = $xmldoc->createElement('X509Certificate', $cert);
+        $x509DataNode->appendChild($newNode7);
+        $xmlResp = $xmldoc->saveXML();
+        \openssl_free_key($pkeyid);
         //retorna o documento assinado
-        return $xml;
+        return $xmlResp;
     }
     
     /**
-     * Verifica a validade da assinatura digital contida no xml 
+     * Verifica a validade da assinatura digital contida no xml
+     *  
      * @param string $xml path para o xml ou o conteudo do mesmo em uma string
      * @param string $tag tag que foi assinada no documento xml
      * @return boolean
@@ -423,7 +440,7 @@ class Pkcs12
         } else {
             $dom->load($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
         }
-        $errors = libxml_get_errors();
+        $errors = \libxml_get_errors();
         if (!empty($errors)) {
             $msg = "O arquivo informado não é um xml.";
             throw new Exception\RuntimeException($msg);
@@ -453,8 +470,8 @@ class Pkcs12
         $signContent = $dom->getElementsByTagName('SignedInfo')->item(0)->C14N(false, false, null, null);
         // validando assinatura do conteudo
         $signContentXML = $dom->getElementsByTagName('SignatureValue')->item(0)->nodeValue;
-        $signContentXML = base64_decode(str_replace(array("\r", "\n"), '', $signContentXML));
-        $resp = openssl_verify($signContent, $signContentXML, $pubKey);
+        $signContentXML1 = \base64_decode(str_replace(array("\r", "\n"), '', $signContentXML));
+        $resp = \openssl_verify($signContent, $signContentXML1, $pubKey);
         if ($resp != 1) {
             $msg = "Problema ({$resp}) ao verificar a assinatura do digital!!";
             throw new Exception\RuntimeException($msg);
@@ -466,22 +483,23 @@ class Pkcs12
      * Verifica a data de validade do certificado digital
      * e compara com a data de hoje.
      * Caso o certificado tenha expirado o mesmo será removido das
-     * pastas e o médoto irá retornar false.
+     * pastas e o método irá retornar false.
+     * 
      * @param string $pubKey chave publica
      * @return boolean
      */
     protected function validCerts($pubKey)
     {
-        $data = openssl_x509_read($pubKey);
-        $certData = openssl_x509_parse($data);
+        $data = \openssl_x509_read($pubKey);
+        $certData = \openssl_x509_parse($data);
         // reformata a data de validade;
         $ano = substr($certData['validTo'], 0, 2);
         $mes = substr($certData['validTo'], 2, 2);
         $dia = substr($certData['validTo'], 4, 2);
         //obtem o timestamp da data de validade do certificado
-        $dValid = gmmktime(0, 0, 0, $mes, $dia, $ano);
+        $dValid = \gmmktime(0, 0, 0, $mes, $dia, $ano);
         // obtem o timestamp da data de hoje
-        $dHoje = gmmktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        $dHoje = \gmmktime(0, 0, 0, date("m"), date("d"), date("Y"));
         // compara a data de validade com a data atual
         $this->expireTimestamp = $dValid;
         if ($dHoje > $dValid) {
@@ -523,6 +541,7 @@ class Pkcs12
     /**
      * Divide a string do certificado publico em linhas
      * com 76 caracteres (padrão original)
+     * 
      * @name splitLines
      * @param string $cnt certificado
      * @return string certificado reformatado 
