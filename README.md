@@ -24,5 +24,5 @@ _Um bom inicio para os contribuidores é usar as recomendações do [PHP do Jeit
 
 #Dependências providas pelo Composer
 
-- [ApiGen](http://apigen.org/), para geração da documentação
+- [phpDox](http://phpdox.de/), para geração da documentação
 
