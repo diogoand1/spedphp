@@ -1,12 +1,7 @@
 <?php
 
-namespace SpedPHP\Common\Certificate;
-
-use SpedPHP\Common\Certificate\Asn;
-use SpedPHP\Common\Exception;
-use DOMDocument;
-
 /**
+ * Classe para tratamento e uso dos certificados digitais modelo A1 (PKCS12)
  * @category   SpedPHP
  * @package    SpedPHP\Common\Certificate
  * @copyright  Copyright (c) 2008-2014
@@ -15,21 +10,71 @@ use DOMDocument;
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
 
+namespace SpedPHP\Common\Certificate;
+
+use SpedPHP\Common\Certificate\Asn;
+use SpedPHP\Common\Exception;
+use DOMDocument;
+
 class Pkcs12
 {
-    //propriedades da classe
-    public $certsDir; //diretorio onde o arquivo pfx está localizado
-    public $pfxName; //nome do arquivo pfx
-    public $cnpj; //CNPJ do emitente
-    public $pubKey; //string com a chave publica no formato PEM
-    public $priKey; //string com a chave privada no formato PEM
-    public $certKey;//string com a combionação da chabe publia e privada no formato PEM
-    public $pubKeyFile; //path para a chave publica em arquivo
-    public $priKeyFile; //path para a chave privada em arquivo
-    public $certKeyFile; //path para o certificado em arquivo
-    public $expireTimestamp; //timestampt da validade do certificado
-    public $error=''; //mensagem de erro
+    /**
+     * Path para o diretorio onde o arquivo pfx está localizado
+     * @var string 
+     */
+    public $certsDir;
+    /**
+     * Nome do arquivo pfx (certificado digital em formato de transporte)
+     * @var string
+     */
+    public $pfxName;
+    /**
+     * NUmero do CNPJ do emitente
+     * @var string
+     */
+    public $cnpj;
+    /**
+     * String que contêm a chave publica em formato PEM
+     * @var string 
+     */
+    public $pubKey;
+    /**
+     * String quem contêm a chave privada em formato PEM
+     * @var string
+     */
+    public $priKey;
+    /**
+     * String que conten a combinação da chave publica e privada em formato PEM
+     * @var string
+     */
+    public $certKey;
     
+    /**
+     * Path para a chave publica em arquivo
+     * @var string
+     */
+    public $pubKeyFile;
+    /**
+     * Path para a chave privada em arquivo
+     * @var string
+     */
+    public $priKeyFile;
+    /**
+     * Path para o certificado em arquivo
+     * @var string
+     */
+    public $certKeyFile;
+    /**
+     * Timestamp da data de validade do certificado
+     * @var timestamp 
+     */
+    public $expireTimestamp;
+    /**
+     * Mensagem de erro da classe
+     * @var string
+     */
+    public $error='';
+
     private $urlDSIG = 'http://www.w3.org/2000/09/xmldsig#';
     private $urlCANONMETH = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
     private $urlSIGMETH = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';

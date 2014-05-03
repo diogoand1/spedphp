@@ -1,8 +1,5 @@
 <?php
 
-
-namespace SpedPHP\Common\Certificate;
-
 /**
  * Classe auxiliar para obter informações dos certificados digitais A1 (PKCS12)
  * @category   SpedPHP
@@ -12,6 +9,8 @@ namespace SpedPHP\Common\Certificate;
  * @author     Roberto L. Machado <linux.rlm@gamil.com>
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
+namespace SpedPHP\Common\Certificate;
 
 class Asn
 {
