@@ -1,5 +1,7 @@
 <?php
 
+namespace SpedPHP\Common\Certificate;
+
 /**
  * Classe para tratamento e uso dos certificados digitais modelo A1 (PKCS12)
  * @category   SpedPHP
@@ -9,8 +11,6 @@
  * @author     Roberto L. Machado <linux.rlm@gamil.com>
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
-
-namespace SpedPHP\Common\Certificate;
 
 use SpedPHP\Common\Certificate\Asn;
 use SpedPHP\Common\Exception;

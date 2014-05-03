@@ -1,5 +1,7 @@
 <?php
 
+namespace SpedPHP\Common\Util;
+
 /**
  * Classe auxiliar com algumas funções utilitárias de uso comum da API
  * @category   SpedPHP
@@ -9,8 +11,6 @@
  * @author     Roberto L. Machado <linux.rlm@gamil.com>
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
-
-namespace SpedPHP\Common\Util;
 
 use SpedPHP\Common\Exception;
 
