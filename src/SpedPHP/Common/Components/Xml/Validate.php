@@ -15,7 +15,11 @@ use SpedPHP\Common\Exception;
 
 class XmlValidate
 {
-    
+    /**
+     * Contêm os erros retornados da analise do xml
+     * 
+     * @var array
+     */
     public $aError = array();
     
     /**
@@ -34,7 +38,7 @@ class XmlValidate
      * @param array   $aError Variável passada como referencia irá conter as mensagens de erro se houverem 
      * @return boolean 
      */
-    public function validXML($xml = '', $xsdFile = '', &$aError = '')
+    public function validXML($xml = '', $xsdFile = '', &$aError = array())
     {
         try {
             // Habilita a manipulaçao de erros da libxml
