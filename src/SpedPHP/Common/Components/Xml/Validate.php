@@ -37,7 +37,6 @@ class XmlValidate
     public function validXML($xml = '', $xsdFile = '', &$aError = '')
     {
         try {
-            $flagOK = true;
             // Habilita a manipulaçao de erros da libxml
             libxml_use_internal_errors(true);
             //limpar erros anteriores que possam estar em memória
