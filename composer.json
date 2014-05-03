@@ -38,11 +38,7 @@
         "ext-zlib": "*",
         "ext-fileinfo": "*",
         "ext-iconv": "*",
-        "ext-mbstring": "*",
-        "openlss/lib-array2xml": "dev-master",
-        "ensepar/tcpdf": "dev-master",
-        "phpmailer/phpmailer": ">=v5.2.6",
-        "endroid/qrcode": "dev-master"
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "ext-xdebug": "*",
