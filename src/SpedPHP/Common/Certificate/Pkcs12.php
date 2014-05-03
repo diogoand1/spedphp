@@ -440,7 +440,7 @@ class Pkcs12
         } else {
             $dom->load($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
         }
-        $errors = \libxml_get_errors();
+        $errors = libxml_get_errors();
         if (!empty($errors)) {
             $msg = "O arquivo informado não é um xml.";
             throw new Exception\RuntimeException($msg);

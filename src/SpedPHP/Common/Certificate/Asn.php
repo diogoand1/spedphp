@@ -14,7 +14,11 @@ namespace SpedPHP\Common\Certificate;
 
 class Asn
 {
-    
+    /**
+     * Comprimento do campo sendo usado
+     * 
+     * @var integer 
+     */
     protected static $len = 0;
     
     /**
