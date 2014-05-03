@@ -44,7 +44,7 @@ class XmlValidate
             //verifica se foi passado o xml
             if (strlen($xml)==0) {
                 $msg = 'Você deve passar o conteudo do xml como parâmetro ou o caminho completo até o arquivo.';
-                throw new \InvalidArgumentException($msg);
+                throw new Exception\InvalidArgumentException($msg);
             }
             // instancia novo objeto DOM
             $dom = new DOMDocument('1.0', 'utf-8');
@@ -59,9 +59,11 @@ class XmlValidate
             //recupera os erros da libxml
             $errors = libxml_get_errors();
             if (!empty($errors)) {
+                $msg = $this->xmlErros($errors);
+                $aError = $this->aError;
                 //o dado passado como $docXml não é um xml
-                $msg = 'O dado informado não é um XML ou não foi encontrado.';
-                throw new \RuntimeException($msg);
+                $msg = 'O dado informado não é um XML ou não foi encontrado. '.$msg;
+                throw new Exception\RuntimeException($msg);
             }
             //limpa erros anteriores
             libxml_clear_errors();
@@ -70,13 +72,11 @@ class XmlValidate
                 // carrega os erros em um array
                 $aIntErrors = libxml_get_errors();
                 $msg = $this->xmlErros($aIntErrors);
-                if ($msg != '') {
-                    throw new \RuntimeException($msg);
-                }
+                $aError = $this->aError;
+                throw new Exception\RuntimeException($msg);
             }
-        } catch (\RuntimeException $e) {
+        } catch (Exception\RuntimeException $e) {
             $this->aError[] = $e->getMessage();
-            $aError[] = $e->getMessage();
             return false;
         }
         return true;
@@ -138,13 +138,13 @@ class XmlValidate
                     
             switch ($intError->level) {
                 case LIBXML_ERR_WARNING:
-                    $aError[] = " Atençao $intError->code: " . str_replace($en, $pt, $intError->message);
+                    $this->aError[] = " Atenção $intError->code: " . str_replace($en, $pt, $intError->message);
                     break;
                 case LIBXML_ERR_ERROR:
-                    $aError[] = " Erro $intError->code: " . str_replace($en, $pt, $intError->message);
+                    $this->aError[] = " Erro $intError->code: " . str_replace($en, $pt, $intError->message);
                     break;
                 case LIBXML_ERR_FATAL:
-                    $aError[] = " Erro Fatal $intError->code: " . str_replace($en, $pt, $intError->message);
+                    $this->aError[] = " Erro Fatal $intError->code: " . str_replace($en, $pt, $intError->message);
                     break;
             }
             $msg .= str_replace($en, $pt, $intError->message);
