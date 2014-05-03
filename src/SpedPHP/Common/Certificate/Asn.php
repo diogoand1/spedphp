@@ -210,7 +210,6 @@ class Asn
                         $result[] = array(
                             'integer('.self::$len.')',
                             $integerData);
-                        break;
                     } else {
                         $value = 0;
                         if (self::$len <= 4) {
@@ -229,7 +228,6 @@ class Asn
                             }
                         }
                         $result[] = array('integer(' . self::$len . ')', $value);
-                        break;
                     }
                     break;
                 case 0x03:
