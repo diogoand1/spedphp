@@ -342,14 +342,14 @@ class Pkcs12
             throw new Exception\InvalidArgumentException(
                 "Erro ao carregar XML, provavel erro na passagem do parâmetro docxml ou no próprio xml!!"
             );
-            $errors = \libxml_get_errors();
+            $errors = libxml_get_errors();
             if (!empty($errors)) {
                 $eIndex = 1;
                 foreach ($errors as $error) {
                     $msg .= "\n  [$eIndex]-" . trim($error->message);
                     $eIndex++;
                 }
-                \libxml_clear_errors();
+                libxml_clear_errors();
             }
             throw new Exception\RuntimeException($msg);
         }

@@ -10,6 +10,7 @@ namespace SpedPHP\Common\Exception;
  * @author     Roberto L. Machado <linux.rlm@gamil.com>
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
-class LogicException extends \LogicException implements ExceptionInterface
+class UnexpectedValueException extends \UnexpectedValueException implements
+    ExceptionInterface
 {
 }

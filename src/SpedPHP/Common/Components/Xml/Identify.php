@@ -19,7 +19,7 @@ use SpedPHP\Common\Exception;
 
 class Identify
 {
-    public function typeXml()
+    public function typeXml($filename)
     {
         $xmlfile = \file_get_contents($filename);
         $xml = \simplexml_load_string($xmlfile);
@@ -92,7 +92,8 @@ class Identify
 
         $aXSD = array(
             'cancNFe'=>'cancNFe_v',
-            'CCe' => 'CCe_v',
+            'CCe' => 'CCe_v');
+        /*,
             '' => 'confRecebto_v',
             '' => 'consCad_v',
             '' => 'consNFeDest_v',
@@ -126,6 +127,7 @@ class Identify
             '' => 'retEnvEvento_v',
             '' => 'retEnviNFe_v',
             '' => 'retInutNFe_v'
-        );
+        );*/
+        return $xml;
     }
 }
