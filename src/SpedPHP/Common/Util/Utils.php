@@ -31,15 +31,15 @@ class Utils
         $aName = array();
         if (trim($fileMatch) != '' && trim($dir) != '') {
             //passar o padrão para minúsculas
-            $fMatch = (string) strtolower(trim($fileMatch));
+            $fMatch = strtolower(trim($fileMatch));
             //guarda o diretorio atual
-            $oldDir = (string) getcwd().DIRECTORY_SEPARATOR;
+            $oldDir = getcwd().DIRECTORY_SEPARATOR;
             //verifica se o parametro $dir define um diretorio real
             if (is_dir($dir)) {
                 //mude para o novo diretorio
                 chdir($dir);
                 //pegue o diretorio
-                $diretorio = (string) getcwd().DIRECTORY_SEPARATOR;
+                $diretorio = getcwd().DIRECTORY_SEPARATOR;
                 if (strtolower($dir) != strtolower($diretorio)) {
                     $msg = "Falha! sem permissão de leitura no diretorio escolhido.";
                     throw new Exception\NfephpException($msg);
@@ -67,7 +67,7 @@ class Utils
         $ponteiro  = opendir($diretorio);
         $compl = '';
         if ($retPath) {
-            $compl = (string) $diretorio;
+            $compl = $diretorio;
         }
         // monta os vetores com os itens encontrados na pasta
         while (false !== ($file = readdir($ponteiro))) {
