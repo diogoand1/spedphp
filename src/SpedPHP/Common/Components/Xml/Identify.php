@@ -2,21 +2,27 @@
 
 namespace SpedPHP\Common\Components\Xml;
 
-use SpedPHP\Common\Exception;
 
 /**
  * Esta classe perimite a identificação do xml
  * passado como parâmetro e permite também a identificação do 
  * arquivo xsd válido para sua validação
- *
- * @author administrador
+ * @category   SpedPHP
+ * @package    SpedPHP\Common\Components\Xml
+ * @copyright  Copyright (c) 2008-2014
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm@gamil.com>
+ * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
+use SpedPHP\Common\Exception;
+
 class Identify
 {
     public function typeXml()
     {
-        $xmlfile = file_get_contents($filename);
-        $xml = simplexml_load_string($xmlfile);
+        $xmlfile = \file_get_contents($filename);
+        $xml = \simplexml_load_string($xmlfile);
         $tagroot = $xml->getName();
         switch ($tagroot){
             case 'NFe':
@@ -100,7 +106,7 @@ class Identify
             '' => 'envEvento_v',
             '' => 'enviNFe_v',
             '' => 'inutNFe_v',
-            '' => 'nfe_v',
+            'NFe' => 'nfe_v',
             '' => 'procCancNFe_v',
             '' => 'procCCeNFe_v',
             '' => 'procConfRecebtoNFe_v',
@@ -121,7 +127,5 @@ class Identify
             '' => 'retEnviNFe_v',
             '' => 'retInutNFe_v'
         );
-
-
     }
 }

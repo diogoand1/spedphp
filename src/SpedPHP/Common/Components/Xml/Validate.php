@@ -2,16 +2,16 @@
 
 namespace SpedPHP\Common\Components\Xml;
 
-use SpedPHP\Common\Exception;
-
 /**
  * @category   SpedPHP
- * @package    SpedPHP\Common\Components/Xml
+ * @package    SpedPHP\Common\Components\Xml
  * @copyright  Copyright (c) 2008-2014
  * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
  * @author     Roberto L. Machado <linux.rlm@gamil.com>
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
+
+use SpedPHP\Common\Exception;
 
 class XmlValidate
 {
@@ -29,10 +29,10 @@ class XmlValidate
      * Caso seja passado uma NFe ainda não assinada a falta da assinatura será desconsiderada.
      *
      * @name validXML
-     * @param    string  $xml  string contendo o arquivo xml a ser validado ou seu path
-     * @param    string  $xsdfile Path completo para o arquivo xsd
-     * @param    array   $aError Variável passada como referencia irá conter as mensagens de erro se houverem 
-     *  @return   boolean 
+     * @param string  $xml  string contendo o arquivo xml a ser validado ou seu path
+     * @param string  $xsdfile Path completo para o arquivo xsd
+     * @param array   $aError Variável passada como referencia irá conter as mensagens de erro se houverem 
+     * @return boolean 
      */
     public function validXML($xml = '', $xsdFile = '', &$aError = '')
     {
@@ -67,80 +67,12 @@ class XmlValidate
             libxml_clear_errors();
             // valida o xml com o xsd
             if (!$dom->schemaValidate($xsdFile)) {
-                /**
-                 * Se não foi possível validar, você pode capturar
-                 * todos os erros em um array
-                 * Cada elemento do array $arrayErrors
-                 * será um objeto do tipo LibXmlError
-                 */
                 // carrega os erros em um array
                 $aIntErrors = libxml_get_errors();
-                $flagOK = false;
-                $msg = '';
-                foreach ($aIntErrors as $intError) {
-                    $flagOK = false;
-                    $en = array("{http://www.portalfiscal.inf.br/nfe}"
-                                ,"[facet 'pattern']"
-                                ,"The value"
-                                ,"is not accepted by the pattern"
-                                ,"has a length of"
-                                ,"[facet 'minLength']"
-                                ,"this underruns the allowed minimum length of"
-                                ,"[facet 'maxLength']"
-                                ,"this exceeds the allowed maximum length of"
-                                ,"Element"
-                                ,"attribute"
-                                ,"is not a valid value of the local atomic type"
-                                ,"is not a valid value of the atomic type"
-                                ,"Missing child element(s). Expected is"
-                                ,"The document has no document element"
-                                ,"[facet 'enumeration']"
-                                ,"one of"
-                                ,"failed to load external entity"
-                                ,"Failed to locate the main schema resource at"
-                                ,"This element is not expected. Expected is"
-                                ,"is not an element of the set");
-                    
-                    $pt = array(""
-                                ,"[Erro 'Layout']"
-                                ,"O valor"
-                                ,"não é aceito para o padrão."
-                                ,"tem o tamanho"
-                                ,"[Erro 'Tam. Min']"
-                                ,"deve ter o tamanho mínimo de"
-                                ,"[Erro 'Tam. Max']"
-                                ,"Tamanho máximo permitido"
-                                ,"Elemento"
-                                ,"Atributo"
-                                ,"não é um valor válido"
-                                ,"não é um valor válido"
-                                ,"Elemento filho faltando. Era esperado"
-                                ,"Falta uma tag no documento"
-                                ,"[Erro 'Conteúdo']"
-                                ,"um de"
-                                ,"falha ao carregar entidade externa"
-                                ,"Falha ao tentar localizar o schema principal em"
-                                ,"Este elemento não é esperado. Esperado é"
-                                ,"não é um dos seguintes possiveis");
-                    
-                    switch ($intError->level) {
-                        case LIBXML_ERR_WARNING:
-                            $aError[] = " Atençao $intError->code: " . str_replace($en, $pt, $intError->message);
-                            break;
-                        case LIBXML_ERR_ERROR:
-                            $aError[] = " Erro $intError->code: " . str_replace($en, $pt, $intError->message);
-                            break;
-                        case LIBXML_ERR_FATAL:
-                            $aError[] = " Erro Fatal $intError->code: " . str_replace($en, $pt, $intError->message);
-                            break;
-                    }
-                    $msg .= str_replace($en, $pt, $intError->message);
+                $msg = $this->xmlErros($aIntErrors);
+                if ($msg != '') {
+                    throw new \RuntimeException($msg);
                 }
-            } else {
-                $flagOK = true;
-            }
-            if (!$flagOK) {
-                throw new \RuntimeException($msg);
             }
         } catch (\RuntimeException $e) {
             $this->aError[] = $e->getMessage();
@@ -149,4 +81,74 @@ class XmlValidate
         }
         return true;
     } //fim validXML
+    
+    /**
+     * Lista os erros em portugues 
+     * 
+     * @param object $aIntErrors
+     * @return string
+     */
+    private function xmlErros($aIntErrors)
+    {
+        $msg = '';
+        foreach ($aIntErrors as $intError) {
+            $en = array("{http://www.portalfiscal.inf.br/nfe}"
+                ,"[facet 'pattern']"
+                ,"The value"
+                ,"is not accepted by the pattern"
+                ,"has a length of"
+                ,"[facet 'minLength']"
+                ,"this underruns the allowed minimum length of"
+                ,"[facet 'maxLength']"
+                ,"this exceeds the allowed maximum length of"
+                ,"Element"
+                ,"attribute"
+                ,"is not a valid value of the local atomic type"
+                ,"is not a valid value of the atomic type"
+                ,"Missing child element(s). Expected is"
+                ,"The document has no document element"
+                ,"[facet 'enumeration']"
+                ,"one of"
+                ,"failed to load external entity"
+                ,"Failed to locate the main schema resource at"
+                ,"This element is not expected. Expected is"
+                ,"is not an element of the set");
+            
+            $pt = array(""
+                ,"[Erro 'Layout']"
+                ,"O valor"
+                ,"não é aceito para o padrão."
+                ,"tem o tamanho"
+                ,"[Erro 'Tam. Min']"
+                ,"deve ter o tamanho mínimo de"
+                ,"[Erro 'Tam. Max']"
+                ,"Tamanho máximo permitido"
+                ,"Elemento"
+                ,"Atributo"
+                ,"não é um valor válido"
+                ,"não é um valor válido"
+                ,"Elemento filho faltando. Era esperado"
+                ,"Falta uma tag no documento"
+                ,"[Erro 'Conteúdo']"
+                ,"um de"
+                ,"falha ao carregar entidade externa"
+                ,"Falha ao tentar localizar o schema principal em"
+                ,"Este elemento não é esperado. Esperado é"
+                ,"não é um dos seguintes possiveis");
+                    
+            switch ($intError->level) {
+                case LIBXML_ERR_WARNING:
+                    $aError[] = " Atençao $intError->code: " . str_replace($en, $pt, $intError->message);
+                    break;
+                case LIBXML_ERR_ERROR:
+                    $aError[] = " Erro $intError->code: " . str_replace($en, $pt, $intError->message);
+                    break;
+                case LIBXML_ERR_FATAL:
+                    $aError[] = " Erro Fatal $intError->code: " . str_replace($en, $pt, $intError->message);
+                    break;
+            }
+            $msg .= str_replace($en, $pt, $intError->message);
+        }
+        return $msg;
+    }
 }

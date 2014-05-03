@@ -181,7 +181,6 @@ class Pkcs12
                 return false;
             }
         }
-        return true;
     }//fim init
 
     /**
