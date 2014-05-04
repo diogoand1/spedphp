@@ -14,6 +14,7 @@ namespace SpedPHP\Common\Certificate;
  */
 
 use SpedPHP\Common\Certificate\Asn;
+use SpedPHP\Common\Components\Xml;
 use SpedPHP\Common\Exception;
 
 class Pkcs12
@@ -257,7 +258,7 @@ class Pkcs12
             );
         }
         //carrega o certificado em um string
-        $pfxContent = \file_get_contents($pfxCert);
+        $pfxContent = file_get_contents($pfxCert);
         //carrega os certificados e chaves para um array denominado $x509certdata
         $x509certdata = array();
         if (!openssl_pkcs12_read($pfxContent, $x509certdata, $keyPass)) {
@@ -318,6 +319,12 @@ class Pkcs12
         } else {
             $xml = $docxml;
         }
+        $order = array("\r\n", "\n", "\r", "\t");
+        $xml = str_replace($order, '', $xml);
+        $xmlVal = new Xml\XmlValidate();
+        if (!$xmlVal->validXML($xml)) {
+            return false;
+        }
         if ($tagid == '') {
             $msg = "A tag a ser assinada deve ser indicada.";
             throw new Exception\InvalidArgumentException($msg);
@@ -328,31 +335,12 @@ class Pkcs12
         }
         $pkeyid = openssl_get_privatekey($this->priKey);
         // limpeza do xml com a retirada dos CR, LF e TAB
-        $order = array("\r\n", "\n", "\r", "\t");
-        $replace = '';
-        $xml = str_replace($order, $replace, $xml);
-        libxml_use_internal_errors(true); // Habilita a manipulaçao de erros da libxml
-        libxml_clear_errors(); //limpar erros anteriores que possam estar em memória
+        
         $xmldoc = new \DOMDocument('1.0', 'utf-8');// carrega o documento no DOM
         $xmldoc->preserveWhiteSpace = false; //elimina espaços em branco
         $xmldoc->formatOutput = false;
-        if ($xmldoc->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG)) {
-            $root = $xmldoc->documentElement;
-        } else {
-            throw new Exception\InvalidArgumentException(
-                "Erro ao carregar XML, provavel erro na passagem do parâmetro docxml ou no próprio xml!!"
-            );
-            $errors = libxml_get_errors();
-            if (!empty($errors)) {
-                $eIndex = 1;
-                foreach ($errors as $error) {
-                    $msg .= "\n  [$eIndex]-" . trim($error->message);
-                    $eIndex++;
-                }
-                libxml_clear_errors();
-            }
-            throw new Exception\RuntimeException($msg);
-        }
+        $xmldoc->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
+        $root = $xmldoc->documentElement;
         //extrair a tag com os dados a serem assinados
         $node = $xmldoc->getElementsByTagName($tagid)->item(0);
         if (!isset($node)) {
@@ -429,8 +417,6 @@ class Pkcs12
             $msg = "O parâmetro tag está vazio.";
             throw new Exception\InvalidArgumentException($msg);
         }
-        // Habilita a manipulaçao de erros da libxml
-        libxml_use_internal_errors(true);
         $dom = new \DOMDocument('1.0', 'utf-8');
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = false;
@@ -438,11 +424,6 @@ class Pkcs12
             $dom->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
         } else {
             $dom->load($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
-        }
-        $errors = libxml_get_errors();
-        if (!empty($errors)) {
-            $msg = "O arquivo informado não é um xml.";
-            throw new Exception\RuntimeException($msg);
         }
         $tagBase = $dom->getElementsByTagName($tag)->item(0);
         // validar digest value

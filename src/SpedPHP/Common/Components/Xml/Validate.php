@@ -22,6 +22,14 @@ class XmlValidate
      */
     public $aError = array();
     
+    public function __construct()
+    {
+        // Habilita a manipulaçao de erros da libxml
+        libxml_use_internal_errors(true);
+        //limpar erros anteriores que possam estar em memória
+        libxml_clear_errors();
+    }
+    
     /**
      * Verifica a validade do xml com base no xsd
      * Esta função pode validar qualquer arquivo xml do sistema de NFe
@@ -41,10 +49,6 @@ class XmlValidate
     public function validXML($xml = '', $xsdFile = '', &$aError = array())
     {
         try {
-            // Habilita a manipulaçao de erros da libxml
-            libxml_use_internal_errors(true);
-            //limpar erros anteriores que possam estar em memória
-            libxml_clear_errors();
             //verifica se foi passado o xml
             if (strlen($xml)==0) {
                 $msg = 'Você deve passar o conteudo do xml como parâmetro ou o caminho completo até o arquivo.';
@@ -71,13 +75,15 @@ class XmlValidate
             }
             //limpa erros anteriores
             libxml_clear_errors();
-            // valida o xml com o xsd
-            if (!$dom->schemaValidate($xsdFile)) {
-                // carrega os erros em um array
-                $aIntErrors = libxml_get_errors();
-                $msg = $this->xmlErros($aIntErrors);
-                $aError = $this->aError;
-                throw new Exception\RuntimeException($msg);
+            if (is_file($xsdFile)) {
+                // valida o xml com o xsd
+                if (!$dom->schemaValidate($xsdFile)) {
+                    // carrega os erros em um array
+                    $aIntErrors = libxml_get_errors();
+                    $msg = $this->xmlErros($aIntErrors);
+                    $aError = $this->aError;
+                    throw new Exception\RuntimeException($msg);
+                }
             }
         } catch (Exception\RuntimeException $e) {
             $this->aError[] = $e->getMessage();
@@ -85,7 +91,7 @@ class XmlValidate
         }
         return true;
     } //fim validXML
-    
+
     /**
      * Lista os erros em portugues 
      * 

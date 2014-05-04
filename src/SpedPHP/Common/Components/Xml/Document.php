@@ -48,18 +48,14 @@ class Document extends \DOMDocument
         } else {
             $newNode = parent::appendChild($newNode);
         }
-
         return $newNode;
     }
 
     /**
-     * (PHP 5)<br/>
      * Removes children by tag name from list of children
      *
      * @link http://php.net/manual/en/domnode.removechild.php
-     *
      * @param string $name The tagName to remove children.
-     *
      * @return boolean If the child could be removed the function returns true.
      */
     public function removeElementsByTagName($name)
@@ -68,7 +64,6 @@ class Document extends \DOMDocument
         foreach ($nodes as $node) {
             $this->removeChild($node);
         }
-
         return true;
     }
 
@@ -93,7 +88,6 @@ class Document extends \DOMDocument
                 $this->namespaces[$key] = $node->nodeValue;
             }
         }
-
         return $this->namespaces;
     }
 
@@ -111,7 +105,6 @@ class Document extends \DOMDocument
         foreach ($targetNS as $node) {
             return $node->nodeValue;
         }
-
         return null;
     }
 
@@ -128,13 +121,10 @@ class Document extends \DOMDocument
         if (!$this->isQName($qname)) {
             throw new \RuntimeException("Given argument is not of QName type: " . $qname);
         }
-
         list ($ns, $name) = explode(":", $qname);
-
         if ($resolveNamespace === true) {
             $ns = $this->resolveNamespace($qname);
         }
-
         return array($ns, $name);
     }
 
@@ -143,7 +133,6 @@ class Document extends \DOMDocument
         if (preg_match('/:/', $name)) {
             return true;
         }
-
         return false;
     }
 
@@ -158,7 +147,6 @@ class Document extends \DOMDocument
     public function resolveNamespace($shortNamespace, $fromShort = false)
     {
         $namespaces = $this->getNamespaces($fromShort);
-
         if (array_key_exists($shortNamespace, $namespaces)) {
             return $this->namespaces[$shortNamespace];
         } else {

@@ -20,6 +20,7 @@ class Schema extends Document
 
     /**
      * Load XML from a file.
+     * 
      * @param string $filename The path to the XML document.
      * @param int|null $options [optional]<br>Bitwise OR of the libxml option constants.
      * @param bool $loadExternals [optional]<br>Includes or imports the file content if is TRUE.
@@ -31,7 +32,6 @@ class Schema extends Document
         if (!parent::load($filename, $options)) {
             return false;
         }
-
         $this->fileName = realpath($filename);
         if ($loadExternals) {
             $this->loadExternalFiles($this->fileName);
@@ -41,6 +41,7 @@ class Schema extends Document
 
     /**
      * Load XML from a string.
+     * 
      * @param string $source The string containing the XML.
      * @param int $options [optional]<br>Bitwise OR of the libxml option constants.
      * @param bool $loadExternals 
@@ -53,7 +54,6 @@ class Schema extends Document
         if (!parent::loadXML($source, $options)) {
             return false;
         }
-
         if ($loadExternals) {
             $this->loadExternalFiles();
         }
@@ -127,7 +127,6 @@ class Schema extends Document
     protected function parseSchemaToXml(\DOMElement $xml, \DOMElement $parent)
     {
         foreach ($xml->childNodes as $child) {
-
             if (!$child instanceof \DOMElement) {
                 continue;
             }

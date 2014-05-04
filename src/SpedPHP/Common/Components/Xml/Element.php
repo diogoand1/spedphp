@@ -24,10 +24,10 @@ class Element extends \DOMElement
     /**
      * Adds new child at the end of the children.
      *
-     * @param \DOMNode $newNode <p>The appended child.</p>
-     * @param boolean  $unique  [optional]<p>
+     * @param \DOMNode $newNode The appended child.
+     * @param boolean  $unique  [optional]>
      *                          If sets TRUE, search if exists the same node.
-     * </p>
+     * 
      *
      * @return DOMNode The node added or if is unique, returns the node found.
      */
@@ -52,14 +52,9 @@ class Element extends \DOMElement
      *
      * @link http://php.net/manual/en/domnode.insertbefore.php
      *
-     * @param DOMNode $newnode <p>
-     *                         The new node.
-     * </p>
-     * @param DOMNode $refnode [optional] <p>
-     *                         The reference node. If not supplied, <i>newnode</i> is
-     *                         appended to the children.
-     * </p>
-     *
+     * @param DOMNode $newnode The new node.
+     * @param DOMNode $refnode [optional] 
+     * The reference node. If not supplied, newnode is appended to the children.
      * @return DOMNode The inserted node.
      */
     public function insertBefore(\DOMNode $newnode, \DOMNode $refnode = null)
@@ -75,15 +70,12 @@ class Element extends \DOMElement
      *
      * @link http://php.net/manual/en/domnode.replacechild.php
      *
-     * @param DOMNode $newnode <p>
-     *                         The new node. It must be a member of the target document, i.e.
-     *                         created by one of the DOMDocument->createXXX() methods or imported in
-     *                         the document by .
-     * </p>
-     * @param DOMNode $oldnode <p>
-     *                         The old node.
-     * </p>
-     *
+     * @param DOMNode $newnode 
+     * The new node. It must be a member of the target document, i.e.
+     * created by one of the DOMDocument->createXXX() methods or imported in
+     * the document by .
+     * 
+     * @param DOMNode $oldnode The old node.
      * @return DOMNode The old node or false if an error occur.
      */
     public function replaceChild(\DOMNode $newnode, \DOMNode $oldnode)
@@ -94,15 +86,10 @@ class Element extends \DOMElement
     }
 
     /**
-     * (PHP 5)<br/>
      * Removes children by tag name from list of children
      *
      * @link http://php.net/manual/en/domnode.removechild.php
-     *
-     * @param string $tagName <p>
-     *                        The tagName to remove children.
-     * </p>
-     *
+     * @param string $tagName The tagName to remove children.
      * @return boolean If the child could be removed the function returns true.
      */
     public function removeElementsByTagName($name)
@@ -115,17 +102,15 @@ class Element extends \DOMElement
     }
 
     /**
-     * (PHP 5 &gt;= 5.2.0)<br/>
      * Get an XPath for a node
      *
      * @link http://php.net/manual/en/domnode.getnodepath.php
-     * @return string a string containing the XPath, or <b>NULL</b> in case of an error.
+     * @return string a string containing the XPath, or NULL in case of an error.
      */
     public function getNodeXPath()
     {
         $result = '';
         $node = $this;
-        /* @var $parentNode \DOMElement */
         while ($parentNode = $node->parentNode) {
             $nodeIndex = -1;
             $nodeTagIndex = 0;
