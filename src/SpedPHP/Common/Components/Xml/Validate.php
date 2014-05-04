@@ -13,7 +13,7 @@ namespace SpedPHP\Common\Components\Xml;
 
 use SpedPHP\Common\Exception;
 
-class XmlValidate
+class Validate
 {
     /**
      * Contêm os erros retornados da analise do xml
@@ -55,7 +55,7 @@ class XmlValidate
                 throw new Exception\InvalidArgumentException($msg);
             }
             // instancia novo objeto DOM
-            $dom = new DOMDocument('1.0', 'utf-8');
+            $dom = new Document('1.0', 'utf-8');
             $dom->preservWhiteSpace = false; //elimina espaços em branco
             $dom->formatOutput = false;
             // carrega o xml tanto pelo string contento o xml como por um path

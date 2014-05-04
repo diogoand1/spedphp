@@ -321,7 +321,7 @@ class Pkcs12
         }
         $order = array("\r\n", "\n", "\r", "\t");
         $xml = str_replace($order, '', $xml);
-        $xmlVal = new Xml\XmlValidate();
+        $xmlVal = new Xml\Validate();
         if (!$xmlVal->validXML($xml)) {
             return false;
         }
