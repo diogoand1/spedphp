@@ -29,8 +29,8 @@ class Asn
      */
     public static function getCNPJCert($certPem)
     {
-        $certDer = self::pem2Der($certPem);
-        $data = self::getOIDdata($certDer, '2.16.76.1.3.3');
+        $certDer = self::pem2Der((string) $certPem);
+        $data = self::getOIDdata((string) $certDer, '2.16.76.1.3.3');
         return $data[0][1][1][0][1];
     }//fim getCNPJCert
 
@@ -38,8 +38,8 @@ class Asn
      * pem2Der
      * Transforma o certificado do formato PEM para o formato DER
      * 
-     * @param type $pem_data
-     * @return type
+     * @param string $pem_data
+     * @return string
      */
     protected static function pem2Der($pemData)
     {
@@ -49,7 +49,7 @@ class Asn
         $pemData1 = substr($pemData, strpos($pemData, $begin) + strlen($begin));
         $pemData2 = substr($pemData1, 0, strpos($pemData1, $end));
         //converte o resultado para binário obtendo um certificado em formato DER
-        $derData = base64_decode($pemData2);
+        $derData = base64_decode((string) $pemData2);
         return $derData;
     }//fim pem2Der
     
@@ -66,7 +66,7 @@ class Asn
     protected static function getOIDdata($certDer, $oidNumber)
     {
         //converte onumero OTD de texto para hexadecimal
-        $oidHexa = self::oidtoHex($oidNumber);
+        $oidHexa = self::oidtoHex((string) $oidNumber);
         //Divide o certificado usando a OID como marcador,uma antes do OID e outra contendo o OID.
         //Normalmente o certificado será dividido em duas partes, pois em geral existe
         //apenas um OID de cada tipo no certificado, mas podem haver mais.
@@ -104,11 +104,11 @@ class Asn
                 $len = ord($data[1]);
                 $bytes = 0;
                 // obtem tamanho da parte de dados da oid
-                self::getLength($len, $bytes, $data);
+                self::getLength((integer) $len, (integer) $bytes, (string) $data);
                 // Obtem o conjunto de bytes pertencentes a oid
                 $oidData = substr($data, 2 + $bytes, $len);
                 //parse dos dados da oid
-                $ret[] =  self::parseASN($oidData);
+                $ret[] =  self::parseASN((string) $oidData);
             }
         }
         return $ret;
@@ -139,7 +139,7 @@ class Asn
                 $bun +=  $partes[$num];
                 $abBinary[] = $bun;
             } else {
-                $abBinary = self::xBase128($abBinary, $partes[$num], 1);
+                $abBinary = self::xBase128((integer) $abBinary, (integer) $partes[$num], 1);
             }
         }
         $value = chr(0x06) . chr(count($abBinary));
@@ -163,7 +163,7 @@ class Asn
     {
         $abc = $abIn;
         if ($qIn > 127) {
-            $abc = self::xBase128($abc, floor($qIn/128), 0);
+            $abc = self::xBase128((integer) $abc, (integer) floor($qIn/128), 0);
         }
         $qIn = $qIn % 128;
         if ($flag) {
@@ -178,8 +178,8 @@ class Asn
      * parseASN
      * Retorna a informação requerida do certificado
      * 
-     * @param type $data bloco de dados do certificaod a ser traduzido
-     * @param type $contextEspecific
+     * @param string $data bloco de dados do certificado a ser traduzido
+     * @param boolean $contextEspecific
      * @return array com o dado do certificado já traduzido
      */
     protected static function parseASN($data, $contextEspecific = false)
@@ -207,7 +207,7 @@ class Asn
                     // Integer type
                     self::$len = ord($data[1]);
                     $bytes = 0;
-                    self::getLength(self::$len, $bytes, $data);
+                    self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
                     $integerData = substr($data, 2 + $bytes, self::$len);
                     $data = substr($data, 2 + $bytes + self::$len);
                     if (self::$len == 16) {
@@ -314,6 +314,9 @@ class Asn
         }
     }//fim parseASN
 
+    /**
+     * 
+     */
     protected static function parseHexExtensions(&$data, &$result, $text)
     {
         $extensionData = substr($data, 0, 1);
@@ -323,12 +326,15 @@ class Asn
             dechex($extensionData));
     }//fim parseHexExtensions
     
+    /**
+     * 
+     */
     protected static function parsePrintableString(&$data, &$result)
     {
         // Printable string type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -336,41 +342,50 @@ class Asn
             $stringData);
     }//fim parsePrintableString
     
+    /**
+     * 
+     */
     protected static function parseCharString(&$data, &$result)
     {
         // Character string type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
             'string (' . self::$len . ')',
-            self::printHex($stringData));
+            self::printHex((string) $stringData));
     }//fim parseCharString
     
+    /**
+     * 
+     */
     protected static function parseExtensions(&$data, &$result, $text)
     {
         // Extensions
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $extensionData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
             "$text (" . self::$len . ")",
-            array(self::parseASN($extensionData, true)));
+            array(self::parseASN((string) $extensionData, true)));
     }//parseExtensions
     
+    /**
+     * 
+     */
     protected static function parseSequence(&$data, &$result)
     {
         // Sequence
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $sequenceData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
-        $values = self::parseASN($sequenceData);
+        $values = self::parseASN((string) $sequenceData);
         if (!is_array($values) || is_string($values[0])) {
             $values = array($values);
         }
@@ -379,6 +394,9 @@ class Asn
             $values);
     }
     
+    /**
+     * 
+     */
     protected static function parseOIDtype(&$data, &$result)
     {
         //lista com os números e descrição dos OID
@@ -386,7 +404,7 @@ class Asn
         // Object identifier type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $oidData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         // Unpack the OID
@@ -414,24 +432,30 @@ class Asn
         }
     }
     
+    /**
+     * 
+     */
     protected static function parseSetOf(&$data, &$result)
     {
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $sequenceData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
             'set (' . self::$len . ')',
-            self::parseASN($sequenceData));
+            self::parseASN((string) $sequenceData));
     }
     
+    /**
+     * 
+     */
     protected static function parseOctetSting(&$data, &$result, $contextEspecific)
     {
         // Octetstring type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $octectstringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         if ($contextEspecific) {
@@ -441,16 +465,19 @@ class Asn
         } else {
             $result[] = array(
                 'octet string ('.self::$len.')',
-                self::parseASN($octectstringData));
+                self::parseASN((string) $octectstringData));
         }
     }
-
+    
+    /**
+     * 
+     */
     protected static function parseUtf8String(&$data, &$result, $contextEspecific)
     {
         // UTF8 STRING
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $octectstringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         if ($contextEspecific) {
@@ -460,16 +487,19 @@ class Asn
         } else {
             $result[] = array(
                 'utf8 string ('.self::$len.')',
-                self::parseASN($octectstringData));
+                self::parseASN((string) $octectstringData));
         }
     }
 
+    /**
+     * 
+     */
     protected static function parseIA5String(&$data, &$result)
     {
         // Character string type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -477,25 +507,31 @@ class Asn
             $stringData);
     }
     
+    /**
+     * 
+     */
     protected static function parseString(&$data, &$result)
     {
         // Character string type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
             'string (' . self::$len . ')',
             $stringData);
     }
-
+    
+    /**
+     * 
+     */
     protected static function parseBitString(&$data, &$result)
     {
         // Bitstring type
         self::$len = ord($data[1]);
         $bytes = 0;
-        self::getLength(self::$len, $bytes, $data);
+        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
         $bitstringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -504,7 +540,6 @@ class Asn
     }
 
     /**
-     * printHex
      * Retorna o valor em caracteres hexadecimais
      * 
      * @param strint $value 

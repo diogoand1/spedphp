@@ -13,7 +13,6 @@ class Document extends \DOMDocument
 {
 
     const ATTRIBUTES = '__ATTRIBUTES__';
-
     const CONTENT = '__CONTENT__';
 
     /**
@@ -23,9 +22,9 @@ class Document extends \DOMDocument
      */
     protected $namespaces;
 
-    public function __construct()
+    public function __construct($version = '1.0', $charset = 'UTF-8')
     {
-        parent::__construct('1.0', 'UTF-8');
+        parent::__construct($version, $charset);
         parent::registerNodeClass('\DOMElement', '\SpedPHP\Common\Components\Xml\Element');
     }
 
@@ -109,8 +108,9 @@ class Document extends \DOMDocument
     }
 
     /**
-     *
-     * @param string  $qname            QName string (ex, ns1:Name)
+     * QName string (ex, ns1:Name)
+     * 
+     * @param string  $qname
      * @param boolean $resolveNamespace [optional] Resolve namespace code to full form
      *
      * @throws \RuntimeException
@@ -119,7 +119,7 @@ class Document extends \DOMDocument
     public function parseQName($qname, $resolveNamespace = false)
     {
         if (!$this->isQName($qname)) {
-            throw new \RuntimeException("Given argument is not of QName type: " . $qname);
+            throw new \RuntimeException("O argumento fornecido não é tipo QName : " . $qname);
         }
         list ($ns, $name) = explode(":", $qname);
         if ($resolveNamespace === true) {
@@ -127,7 +127,13 @@ class Document extends \DOMDocument
         }
         return array($ns, $name);
     }
-
+    
+    /**
+     * isQName
+     * 
+     * @param type $name
+     * @return boolean
+     */
     public function isQName($name)
     {
         if (preg_match('/:/', $name)) {
@@ -163,17 +169,14 @@ class Document extends \DOMDocument
     public function getNamespaceCode($longNamespace, $short = false)
     {
         $namespaces = array_flip($this->getNamespaces());
-
         if (array_key_exists($longNamespace, $namespaces)) {
             $code = $namespaces[$longNamespace];
             if ($short === true) {
                 $codeQName = $this->parseQName($namespaces[$longNamespace]);
                 $code = $codeQName[1];
             }
-
             return $code;
         }
-
         return false;
     }
 
@@ -237,7 +240,6 @@ class Document extends \DOMDocument
     {
         $document = new Document();
         $document->appendChild(self::createDOMElement($source, $document, $rootTagName));
-
         return $document;
     }
 
@@ -252,6 +254,8 @@ class Document extends \DOMDocument
     }
 
     /**
+     * createDOMElement 
+     * 
      * @param mixed        $source
      * @param \DOMDocument $document
      * @param string       $tagName
@@ -263,29 +267,26 @@ class Document extends \DOMDocument
         if (!is_array($source)) {
             $element = $document->createElement($tagName);
             $element->appendChild($document->createCDATASection($source));
-
             return $element;
         }
-
         $element = is_null($tagName) ? $document->documentElement : $document->createElement($tagName);
-
-        foreach ($source as $key => $value)
+        foreach ($source as $key => $value) {
             if (is_string($key)) {
                 if ($key == self::ATTRIBUTES) {
                     foreach ($value as $attributeName => $attributeValue) {
                         $element->setAttribute($attributeName, $attributeValue);
                     }
-                } else if ($key == self::CONTENT) {
+                } elseif ($key == self::CONTENT) {
                     $element->appendChild($document->createCDATASection($value));
                 } else {
-                    foreach ((is_array($value) ? $value : array($value)) as $elementKey => $elementValue) {
+                    foreach ((is_array($value) ? $value : array_values(array($value))) as $elementValue) {
                         $element->appendChild(self::createDOMElement($elementValue, $document, $key));
                     }
                 }
             } else {
                 $element->appendChild(self::createDOMElement($value, $document, $tagName));
             }
-
+        }
         return $element;
     }
 
@@ -297,29 +298,26 @@ class Document extends \DOMDocument
     private static function createArray(\DOMNode $domNode)
     {
         $array = array();
-
         for ($i = 0; $i < $domNode->childNodes->length; $i++) {
             $item = $domNode->childNodes->item($i);
-
             if ($item->nodeType == XML_ELEMENT_NODE) {
                 $arrayElement = array();
-
-                for ($attributeIndex = 0; !is_null($attribute = $item->attributes->item($attributeIndex)); $attributeIndex++)
-                    if ($attribute->nodeType == XML_ATTRIBUTE_NODE)
+                for ($attributeIndex = 0; !is_null($attribute = $item->attributes->item($attributeIndex)); $attributeIndex++) {
+                    if ($attribute->nodeType == XML_ATTRIBUTE_NODE) {
                         $arrayElement[self::ATTRIBUTES][$attribute->nodeName] = $attribute->nodeValue;
-
+                    }
+                }
                 $children = self::createArray($item);
-
-                if (is_array($children))
+                if (is_array($children)) {
                     $arrayElement = array_merge($arrayElement, $children);
-                else
+                } else {
                     $arrayElement[self::CONTENT] = $children;
-
+                }
                 $array[$item->nodeName][] = $arrayElement;
-            } else if ($item->nodeType == XML_CDATA_SECTION_NODE || ($item->nodeType == XML_TEXT_NODE && trim($item->nodeValue) != ''))
+            } elseif ($item->nodeType == XML_CDATA_SECTION_NODE || ($item->nodeType == XML_TEXT_NODE && trim($item->nodeValue) != '')) {
                 return $item->nodeValue;
+            }
         }
-
         return $array;
     }
 }
