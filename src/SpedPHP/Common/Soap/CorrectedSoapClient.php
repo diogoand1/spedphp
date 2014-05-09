@@ -26,6 +26,11 @@ use SoapClient;
  */
 class CorrectedSoapClient extends SoapClient
 {
+    public function __construct($sefazURL, $options)
+    {
+        parent::__construct($sefazURL, $options);
+    }
+    
     public function __doRequest($request, $location, $action, $version, $oneWay = 0)
     {
         $aFind = array(":ns1","ns1:","\n","\r");

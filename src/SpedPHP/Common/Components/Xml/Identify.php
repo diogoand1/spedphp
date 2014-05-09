@@ -128,6 +128,6 @@ class Identify
             '' => 'retEnviNFe_v',
             '' => 'retInutNFe_v'
         );*/
-        return $xml;
+        return $aXSD;
     }
 }

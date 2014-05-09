@@ -56,7 +56,7 @@ class Validate
             }
             // instancia novo objeto DOM
             $dom = new Document('1.0', 'utf-8');
-            $dom->preservWhiteSpace = false; //elimina espaços em branco
+            $dom->preserveWhiteSpace = false; //elimina espaços em branco
             $dom->formatOutput = false;
             // carrega o xml tanto pelo string contento o xml como por um path
             if (is_file($xml)) {

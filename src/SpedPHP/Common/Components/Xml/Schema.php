@@ -3,6 +3,7 @@
 namespace SpedPHP\Common\Components\Xml;
 
 use SpedPHP\Common\Components\Xml\Document;
+use SpedPHP\Common\Exception;
 
 /**
  * @category   SpedPHP
@@ -65,7 +66,7 @@ class Schema extends Document
      *
      * @param string $filepath Full path to first XSD Schema.
      * @param \DOMDocument $dom DOM model of the schema.
-     * @throws \RuntimeException 
+     * @throws RuntimeException 
      */
     public function loadExternalFiles($filepath = null, $dom = null)
     {
@@ -86,7 +87,7 @@ class Schema extends Document
                     continue;
                 }
                 if (!file_exists($xsdFileName)) {
-                    throw new \RuntimeException('File not found');
+                    throw new Exception\RuntimeException('File not found');
                 }
                 $parent = $entry->parentNode;
                 $xsd = new Schema();
@@ -163,7 +164,10 @@ class Schema extends Document
                     if ($child->hasAttribute('fixed')) {
                         $parent->setAttribute($child->getAttribute('name'), $child->getAttribute('fixed'));
                     } elseif ($child->hasAttribute('type')) {
-                        $parent->setAttribute($child->getAttribute('name'), preg_replace("/^.*\:/", '', $child->getAttribute('type')));
+                        $parent->setAttribute(
+                            $child->getAttribute('name'),
+                            preg_replace("/^.*\:/", '', $child->getAttribute('type'))
+                        );
                     }
                     break;
                 case 'choise':

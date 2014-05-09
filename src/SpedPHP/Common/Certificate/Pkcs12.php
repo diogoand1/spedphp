@@ -336,7 +336,7 @@ class Pkcs12
         $pkeyid = openssl_get_privatekey($this->priKey);
         // limpeza do xml com a retirada dos CR, LF e TAB
         
-        $xmldoc = new \DOMDocument('1.0', 'utf-8');// carrega o documento no DOM
+        $xmldoc = new Xml\Document('1.0', 'utf-8');// carrega o documento no DOM
         $xmldoc->preserveWhiteSpace = false; //elimina espaços em branco
         $xmldoc->formatOutput = false;
         $xmldoc->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
@@ -348,10 +348,10 @@ class Pkcs12
                 "A tag < $tagid > não existe no XML!!"
             );
         }
-        $idNfe = \trim($node->getAttribute("Id"));
+        $idNfe = trim($node->getAttribute("Id"));
         $dados = $node->C14N(false, false, null, null);//extrai os dados da tag para uma string
-        $hashValue = \hash('sha1', $dados, true);//calcular o hash dos dados
-        $digValue = \base64_encode($hashValue);
+        $hashValue = hash('sha1', $dados, true);//calcular o hash dos dados
+        $digValue = base64_encode($hashValue);
         $signatureNode = $xmldoc->createElementNS($this->urlDSIG, 'Signature');
         $root->appendChild($signatureNode);
         $signedInfoNode = $xmldoc->createElement('SignedInfo');
@@ -381,8 +381,8 @@ class Pkcs12
         // extrai os dados a serem assinados para uma string
         $dados1 = $signedInfoNode->C14N(false, false, null, null);
         $signature = '';
-        \openssl_sign($dados1, $signature, $pkeyid);
-        $signatureValue = \base64_encode($signature);
+        openssl_sign($dados1, $signature, $pkeyid);
+        $signatureValue = base64_encode($signature);
         $newNode6 = $xmldoc->createElement('SignatureValue', $signatureValue);
         $signatureNode->appendChild($newNode6);
         $keyInfoNode = $xmldoc->createElement('KeyInfo');
@@ -393,7 +393,7 @@ class Pkcs12
         $newNode7 = $xmldoc->createElement('X509Certificate', $cert);
         $x509DataNode->appendChild($newNode7);
         $xmlResp = $xmldoc->saveXML();
-        \openssl_free_key($pkeyid);
+        openssl_free_key($pkeyid);
         //retorna o documento assinado
         return $xmlResp;
     }

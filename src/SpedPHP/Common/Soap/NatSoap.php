@@ -3,7 +3,7 @@
 namespace SpedPHP\Common\Soap;
 
 use SpedPHP\Common\Soap\CorrectedSoapClient;
-use SpedPHP\Common\Exception\NfephpException;
+use SpedPHP\Common\Exception;
 use LSS\XML2Array;
 
 /**
@@ -50,21 +50,20 @@ class NatSoap
         try {
             if ($certificateKey == '' or $privateKey = '' or $publicKey == '') {
                 $msg = 'O path para as chaves deve ser passado na instânciação da classe.';
-                throw new NfephpException($msg);
+                throw new Exception\InvalidArgumentException($msg);
             }
             if ($pathWsdl == '') {
                 $msg = 'O path para os arquivos WSDL deve ser passado na instânciação da classe.';
-                throw new NfephpException($msg);
+                throw new Exception\InvalidArgumentException($msg);
             }
             $this->pubKEY = $publicKey;
             $this->priKEY = $privateKey;
             $this->certKEY = $certificateKey;
             $this->pathWsdl = $pathWsdl;
             $this->soapTimeout = $timeout;
-            
-        } catch (NfephpException $e) {
+        } catch (Exception\RuntimeException $e) {
             $this->aError[] = $e->getMessage();
-            throw $e;
+            return false;
         }
     }//fim __construct
     
@@ -94,7 +93,7 @@ class NatSoap
         try {
             if (!class_exists("SoapClient")) {
                 $msg = "A classe SOAP não está disponível no PHP, veja a configuração.";
-                throw new NfephpException($msg);
+                throw new Exception\RuntimeException($msg);
             }
             $soapFault = '';
             //ativa retorno de erros soap
@@ -170,8 +169,9 @@ class NatSoap
             $this->soapDebug .= "\n" . $oSoapClient->getLastRequest();
             $this->soapDebug .= "\n" . $oSoapClient->getLastResponseHeaders();
             $this->soapDebug .= "\n" . $oSoapClient->getLastResponse();
-        } catch (NfephpException $e) {
-            throw $e;
+        } catch (Exception\RuntimeException $e) {
+            $this->aError[] = $e->getMessage();
+            return false;
         }
         return $resposta;
     } //fim nfeSOAP
