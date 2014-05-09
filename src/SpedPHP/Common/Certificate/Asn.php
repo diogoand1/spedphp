@@ -101,10 +101,10 @@ class Asn
                 //a parte do certificado com o OID
                 $data = $xcv . $oidHexa . $partes[$i];
                 //converte para decimal, o segundo digito da sequencia
-                $len = ord($data[1]);
+                $len = (integer) ord($data[1]);
                 $bytes = 0;
                 // obtem tamanho da parte de dados da oid
-                self::getLength((integer) $len, (integer) $bytes, (string) $data);
+                self::getLength($len, $bytes, (string) $data);
                 // Obtem o conjunto de bytes pertencentes a oid
                 $oidData = substr($data, 2 + $bytes, $len);
                 //parse dos dados da oid
@@ -139,7 +139,7 @@ class Asn
                 $bun +=  $partes[$num];
                 $abBinary[] = $bun;
             } else {
-                $abBinary = self::xBase128((integer) $abBinary, (integer) $partes[$num], 1);
+                $abBinary = self::xBase128((array) $abBinary, (integer) $partes[$num], 1);
             }
         }
         $value = chr(0x06) . chr(count($abBinary));
@@ -154,16 +154,16 @@ class Asn
      * xBase128
      * Retorna o dado convertido em asc
      * 
-     * @param numeric $abIn
-     * @param numeric $qIn 
-     * @param numeric $flag
+     * @param array $abIn
+     * @param integer $qIn 
+     * @param boolean $flag
      * @return numeric
      */
     protected static function xBase128($abIn, $qIn, $flag)
     {
         $abc = $abIn;
         if ($qIn > 127) {
-            $abc = self::xBase128((integer) $abc, (integer) floor($qIn/128), 0);
+            $abc = self::xBase128($abc, floor($qIn/128), 0);
         }
         $qIn = $qIn % 128;
         if ($flag) {
@@ -205,9 +205,9 @@ class Asn
                     break;
                 case 0x02:
                     // Integer type
-                    self::$len = ord($data[1]);
+                    self::$len = (integer) ord($data[1]);
                     $bytes = 0;
-                    self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+                    self::getLength(self::$len, $bytes, (string) $data);
                     $integerData = substr($data, 2 + $bytes, self::$len);
                     $data = substr($data, 2 + $bytes + self::$len);
                     if (self::$len == 16) {
@@ -271,9 +271,9 @@ class Asn
                     break;
                 case 0x17:
                     // Time types
-                    self::$len = ord($data[1]);
+                    self::$len = (integer) ord($data[1]);
                     $bytes = 0;
-                    self::getLength(self::$len, $bytes, $data);
+                    self::getLength(self::$len, $bytes, (string) $data);
                     $timeData = substr($data, 2 + $bytes, self::$len);
                     $data = substr($data, 2 + $bytes + self::$len);
                     $result[] = array(
@@ -316,6 +316,9 @@ class Asn
 
     /**
      * 
+     * @param string $data
+     * @param array $result
+     * @param string $text
      */
     protected static function parseHexExtensions(&$data, &$result, $text)
     {
@@ -328,13 +331,15 @@ class Asn
     
     /**
      * 
+     * @param array $data
+     * @param array $result
      */
     protected static function parsePrintableString(&$data, &$result)
     {
         // Printable string type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -344,13 +349,15 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseCharString(&$data, &$result)
     {
         // Character string type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -360,13 +367,16 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
+     * @param string $text
      */
     protected static function parseExtensions(&$data, &$result, $text)
     {
         // Extensions
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $extensionData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -376,13 +386,15 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseSequence(&$data, &$result)
     {
         // Sequence
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $sequenceData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $values = self::parseASN((string) $sequenceData);
@@ -396,15 +408,17 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseOIDtype(&$data, &$result)
     {
         //lista com os números e descrição dos OID
         include_once('oidsTable.php');
         // Object identifier type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $oidData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         // Unpack the OID
@@ -434,12 +448,14 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseSetOf(&$data, &$result)
     {
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $sequenceData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -449,13 +465,16 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
+     * @param boolean $contextEspecific
      */
     protected static function parseOctetSting(&$data, &$result, $contextEspecific)
     {
         // Octetstring type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $octectstringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         if ($contextEspecific) {
@@ -471,13 +490,16 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
+     * @param boolean $contextEspecific
      */
     protected static function parseUtf8String(&$data, &$result, $contextEspecific)
     {
         // UTF8 STRING
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $octectstringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         if ($contextEspecific) {
@@ -493,13 +515,15 @@ class Asn
 
     /**
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseIA5String(&$data, &$result)
     {
         // Character string type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -509,13 +533,15 @@ class Asn
     
     /**
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseString(&$data, &$result)
     {
         // Character string type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $stringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -524,14 +550,17 @@ class Asn
     }
     
     /**
+     * parseBitString
      * 
+     * @param type $data
+     * @param array $result
      */
     protected static function parseBitString(&$data, &$result)
     {
         // Bitstring type
-        self::$len = ord($data[1]);
+        self::$len = (integer) ord($data[1]);
         $bytes = 0;
-        self::getLength((integer) self::$len, (integer) $bytes, (string) $data);
+        self::getLength(self::$len, $bytes, (string) $data);
         $bitstringData = substr($data, 2 + $bytes, self::$len);
         $data = substr($data, 2 + $bytes + self::$len);
         $result[] = array(
@@ -560,11 +589,10 @@ class Asn
     }//fim printHex
 
     /**
-     * getLength
      * Obtêm o comprimento do conteúdo de uma sequência de dados do certificado
      * 
-     * @param numeric $len variável passada por referência
-     * @param numeric $bytes variável passada por referência
+     * @param integer $len variável passada por referência
+     * @param integer $bytes variável passada por referência
      * @param string $data campo a 
      */
     protected static function getLength(&$len, &$bytes, $data)
