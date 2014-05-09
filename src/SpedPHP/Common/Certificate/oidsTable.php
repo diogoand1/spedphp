@@ -769,7 +769,8 @@ $oidsTable = array(
         '2.16.76.1.2.1.11' => 'Política de  Certificado de  Assinatura Digital do
             Tipo  A1 da  Autoridade  Certificadora  CertiSign  Múltipla  na  
             Infra­estrutura  de  Chaves  Públicas  Brasileira',
-        '2.16.76.1.2.1.12' => 'Política  de  Certificado  de   Assinatura   Digital   Tipo   A1   da   Autoridade  Certificadora CertiSign para a Secretaria da Receita Federal',
+        '2.16.76.1.2.1.12' => 'Política  de  Certificado  de   Assinatura   Digital Tipo A1 da '
+    . 'Autoridade Certificadora CertiSign para a Secretaria da Receita Federal',
         '2.16.76.1.2.1.13' => 'Política de Certificado de Assinatura Digital Tipo A1 da AC SERASA SRF',
         '2.16.76.1.2.1.14' => 'Política  de Certificado  de  Assinatura   Digital
             Tipo  A1  da  Autoridade Certificadora Imprensa Oficial ­ SP',
@@ -820,12 +821,14 @@ $oidsTable = array(
         '2.16.76.1.2.3.5' => 'Política de Certificado de Assinatura Digital do Tipo A3
             da  Autoridade Certificadora CertiSign Múltipla na Infra­estrutura de Chaves Públicas Brasileira',
         '2.16.76.1.2.3.6' => 'Política de Certificado de Assinatura Digital Tipo A3
-            da Autoridade Certificadora CertiSign para a Secretaria da Receita Federal na Infra­estrutura de Chaves Públicas Brasileira',
+            da Autoridade Certificadora CertiSign para a Secretaria da Receita Federal na Infra­estrutura de 
+            Chaves Públicas Brasileira',
         '2.16.76.1.2.3.7' => 'Política de Certificado de Assinatura Digital do Tipo A3 da AC Caixa  IN',
         '2.16.76.1.2.3.8' => 'Política de Certificado de Assinatura Digital do Tipo A3 da AC Caixa  PF',
         '2.16.76.1.2.3.9' => 'Política de Certificado de Assinatura Digital do Tipo A3 da AC Caixa   PJ',
         '2.16.76.1.2.3.10' => 'Política de Certificado de Assinatura Digital do Tipo A3 da AC SERASA SRF',
-        '2.16.76.1.2.3.11' => 'Política de Certificado de Assinatura Digital do Tipo A3 da  Autoridade Certificadora  Imprensa Oficial ­ SP',
+        '2.16.76.1.2.3.11' => 'Política de Certificado de Assinatura Digital do Tipo A3 da  Autoridade '
+    . 'Certificadora  Imprensa Oficial ­ SP',
         '2.16.76.1.2.3.12' => 'Política de Certificado de Assinatura Digital do Tipo A3
             da  Autoridade Certificadora PRODEMGE',
         '2.16.76.1.2.3.13' => 'Política de Certificados SERPRO do Tipo A3 - PC SERPRO A3',
@@ -934,5 +937,3 @@ $oidsTable = array(
         '2.16.76.1.4.1' => 'Entidades Sindicais',
         '2.16.76.1.4.1.1' => 'SINCOR',
         '2.16.76.1.4.1.1.1' => 'Número de registro do corretor associado');
-
-

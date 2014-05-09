@@ -139,7 +139,7 @@ class Asn
                 $bun +=  $partes[$num];
                 $abBinary[] = $bun;
             } else {
-                $abBinary = self::xBase128((array) $abBinary, (integer) $partes[$num], 1);
+                $abBinary = self::xBase128((array) $abBinary, (integer) $partes[$num], true);
             }
         }
         $value = chr(0x06) . chr(count($abBinary));
@@ -163,13 +163,13 @@ class Asn
     {
         $abc = $abIn;
         if ($qIn > 127) {
-            $abc = self::xBase128($abc, floor($qIn/128), 0);
+            $abc = self::xBase128($abc, floor($qIn/128), false);
         }
-        $qIn = $qIn % 128;
+        $qIn2 = $qIn % 128;
         if ($flag) {
-            $abc[] = $qIn;
+            $abc[] = $qIn2;
         } else {
-            $abc[] = 0x80 | $qIn;
+            $abc[] = 0x80 | $qIn2;
         }
         return $abc;
     }//fim xBase128
@@ -197,42 +197,11 @@ class Asn
                     break;
                 case 0x01:
                     // Boolean type
-                    $booleanValue = (ord($data[2]) == 0xff);
-                    $data = substr($data, 3);
-                    $result[] = array(
-                        'boolean (1)',
-                        $booleanValue);
+                    self::parseBooleanType($data, $result);
                     break;
                 case 0x02:
                     // Integer type
-                    self::$len = (integer) ord($data[1]);
-                    $bytes = 0;
-                    self::getLength(self::$len, $bytes, (string) $data);
-                    $integerData = substr($data, 2 + $bytes, self::$len);
-                    $data = substr($data, 2 + $bytes + self::$len);
-                    if (self::$len == 16) {
-                        $result[] = array(
-                            'integer('.self::$len.')',
-                            $integerData);
-                    } else {
-                        $value = 0;
-                        if (self::$len <= 4) {
-                            // metodo funciona bem para inteiros pequenos
-                            for ($i = 0; $i < strlen($integerData); $i++) {
-                                $value = ($value << 8) | ord($integerData[$i]);
-                            }
-                        } else {
-                            // metodo trabalha com inteiros arbritrários
-                            if (extension_loaded('bcmath')) {
-                                for ($i = 0; $i < strlen($integerData); $i++) {
-                                    $value = bcadd(bcmul($value, 256), ord($integerData[$i]));
-                                }
-                            } else {
-                                $value = -1;
-                            }
-                        }
-                        $result[] = array('integer(' . self::$len . ')', $value);
-                    }
+                    self::parseIntegerType($data, $result);
                     break;
                 case 0x03:
                     self::parseBitString($data, $result);
@@ -271,14 +240,7 @@ class Asn
                     break;
                 case 0x17:
                     // Time types
-                    self::$len = (integer) ord($data[1]);
-                    $bytes = 0;
-                    self::getLength(self::$len, $bytes, (string) $data);
-                    $timeData = substr($data, 2 + $bytes, self::$len);
-                    $data = substr($data, 2 + $bytes + self::$len);
-                    $result[] = array(
-                        'utctime (' . self::$len . ')',
-                        $timeData);
+                    self::parseTimesType($data, $result);
                     break;
                 case 0x82:
                     // X509v3 extensions?
@@ -315,24 +277,108 @@ class Asn
     }//fim parseASN
 
     /**
+     * parseBooleanType
+     *  
+     * @param string $data
+     * @param array $result
+     * @return void
+     */
+    protected static function parseBooleanType(&$data, &$result)
+    {
+        // Boolean type
+        $booleanValue = (boolean) (ord($data[2]) == 0xff);
+        $dataI = substr($data, 3);
+        $result[] = array(
+            'boolean (1)',
+            $booleanValue);
+        $data = $dataI;
+    }
+
+    /**
+     * parseIntegerType
+     *  
+     * @param string $data
+     * @param array $result
+     * @return void
+     */
+    protected static function parseIntegerType(&$data, &$result)
+    {
+        self::$len = (integer) ord($data[1]);
+        $bytes = 0;
+        self::getLength(self::$len, $bytes, (string) $data);
+        $integerData = substr($data, 2 + $bytes, self::$len);
+        $dataI = substr($data, 2 + $bytes + self::$len);
+        if (self::$len == 16) {
+            $result[] = array(
+                'integer('.self::$len.')',
+                $integerData);
+        } else {
+            $value = 0;
+            if (self::$len <= 4) {
+                // metodo funciona bem para inteiros pequenos
+                for ($i = 0; $i < strlen($integerData); $i++) {
+                    $value = ($value << 8) | ord($integerData[$i]);
+                }
+            } else {
+                // metodo trabalha com inteiros arbritrários
+                if (extension_loaded('bcmath')) {
+                    for ($i = 0; $i < strlen($integerData); $i++) {
+                        $value = bcadd(bcmul($value, 256), ord($integerData[$i]));
+                    }
+                } else {
+                    $value = -1;
+                }
+            }
+            $result[] = array('integer(' . self::$len . ')', $value);
+        }
+        $data = $dataI;
+    }
+     
+    /**
+     * parseHexExtensions
      * 
      * @param string $data
      * @param array $result
      * @param string $text
+     * @return void
      */
     protected static function parseHexExtensions(&$data, &$result, $text)
     {
         $extensionData = substr($data, 0, 1);
-        $data = substr($data, 1);
+        $dataI = substr($data, 1);
         $result[] = array(
             $text .' (' . self::$len . ')',
             dechex($extensionData));
+        $data = $dataI;
     }//fim parseHexExtensions
+
+    /**
+     * parseTimesType
+     * 
+     * @param string $data
+     * @param array $result
+     * @return void
+     */
+    protected static function parseTimesType(&$data, &$result)
+    {
+        // Time types
+        self::$len = (integer) ord($data[1]);
+        $bytes = 0;
+        self::getLength(self::$len, $bytes, (string) $data);
+        $timeData = substr($data, 2 + $bytes, self::$len);
+        $dataI = substr($data, 2 + $bytes + self::$len);
+        $result[] = array(
+            'utctime (' . self::$len . ')',
+             $timeData);
+        $data = $dataI;
+    }
     
     /**
+     * parsePrintableString
      * 
-     * @param array $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parsePrintableString(&$data, &$result)
     {
@@ -345,12 +391,15 @@ class Asn
         $result[] = array(
             'Printable String (' . self::$len . ')',
             $stringData);
+        
     }//fim parsePrintableString
     
     /**
+     * parseCharString
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseCharString(&$data, &$result)
     {
@@ -366,10 +415,12 @@ class Asn
     }//fim parseCharString
     
     /**
+     * parseExtensions
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
      * @param string $text
+     * @return void
      */
     protected static function parseExtensions(&$data, &$result, $text)
     {
@@ -385,9 +436,11 @@ class Asn
     }//parseExtensions
     
     /**
+     * parseSequence
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseSequence(&$data, &$result)
     {
@@ -407,9 +460,11 @@ class Asn
     }
     
     /**
+     * parseOIDtype
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseOIDtype(&$data, &$result)
     {
@@ -447,9 +502,11 @@ class Asn
     }
     
     /**
+     * parseSetOf
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseSetOf(&$data, &$result)
     {
@@ -464,10 +521,12 @@ class Asn
     }
     
     /**
+     * parseOctetSting
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
      * @param boolean $contextEspecific
+     * @return void
      */
     protected static function parseOctetSting(&$data, &$result, $contextEspecific)
     {
@@ -489,10 +548,12 @@ class Asn
     }
     
     /**
+     * parseUtf8String
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
      * @param boolean $contextEspecific
+     * @return void
      */
     protected static function parseUtf8String(&$data, &$result, $contextEspecific)
     {
@@ -514,9 +575,11 @@ class Asn
     }
 
     /**
+     * parseIA5String
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseIA5String(&$data, &$result)
     {
@@ -532,9 +595,11 @@ class Asn
     }
     
     /**
+     * parseString
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseString(&$data, &$result)
     {
@@ -552,8 +617,9 @@ class Asn
     /**
      * parseBitString
      * 
-     * @param type $data
+     * @param string $data
      * @param array $result
+     * @return void
      */
     protected static function parseBitString(&$data, &$result)
     {
@@ -571,8 +637,9 @@ class Asn
     /**
      * Retorna o valor em caracteres hexadecimais
      * 
-     * @param strint $value 
+     * @param string $value 
      * @return string
+     * @return void
      */
     protected static function printHex($value)
     {
@@ -594,6 +661,7 @@ class Asn
      * @param integer $len variável passada por referência
      * @param integer $bytes variável passada por referência
      * @param string $data campo a 
+     * @return void
      */
     protected static function getLength(&$len, &$bytes, $data)
     {
