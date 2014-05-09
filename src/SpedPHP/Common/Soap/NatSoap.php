@@ -4,7 +4,6 @@ namespace SpedPHP\Common\Soap;
 
 use SpedPHP\Common\Soap\CorrectedSoapClient;
 use SpedPHP\Common\Exception;
-use LSS\XML2Array;
 
 /**
  * Classe auxiliar para envio das mensagens SOAP usando SOAP nativo do PHP
@@ -155,20 +154,20 @@ class NatSoap
             $varCabec = new SoapVar($cabecalho, XSD_ANYXML);
             $header = new SoapHeader($namespace, 'nfeCabecMsg', $varCabec);
             //instancia o cabeçalho
-            $oSoapClient->setSoapHeaders($header);
+            $oSoapClient->__setSoapHeaders($header);
             //monta o corpo da mensagem soap
             $varBody = new SoapVar($dados, XSD_ANYXML);
             //faz a chamada ao metodo do webservices
-            $resp = $oSoapClient->soapCall($metodo, array($varBody));
+            $resp = $oSoapClient->__soapCall($metodo, array($varBody));
             if (is_soap_fault($resp)) {
                 $soapFault = "SOAP Fault: (faultcode: {$resp->faultcode}, faultstring: {$resp->faultstring})";
             }
-            $resposta = $oSoapClient->getLastResponse();
+            $resposta = $oSoapClient->__getLastResponse();
             $this->soapDebug .= "\n" . $soapFault;
-            $this->soapDebug .= "\n" . $oSoapClient->getLastRequestHeaders();
-            $this->soapDebug .= "\n" . $oSoapClient->getLastRequest();
-            $this->soapDebug .= "\n" . $oSoapClient->getLastResponseHeaders();
-            $this->soapDebug .= "\n" . $oSoapClient->getLastResponse();
+            $this->soapDebug .= "\n" . $oSoapClient->__getLastRequestHeaders();
+            $this->soapDebug .= "\n" . $oSoapClient->__getLastRequest();
+            $this->soapDebug .= "\n" . $oSoapClient->__getLastResponseHeaders();
+            $this->soapDebug .= "\n" . $oSoapClient->__getLastResponse();
         } catch (Exception\RuntimeException $e) {
             $this->aError[] = $e->getMessage();
             return false;
