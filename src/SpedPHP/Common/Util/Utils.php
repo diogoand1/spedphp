@@ -55,10 +55,10 @@ class Utils
 
     /**
      * Lista os arquivos de um diretorio
-     * @param type $diretorio
-     * @param type $fileMatch
-     * @param type $retPath
-     * @return type
+     * @param string $diretorio
+     * @param string $fileMatch
+     * @param boolean $retPath
+     * @return array
      */
     private function dirGetFiles($diretorio, $fileMatch, $retPath = false)
     {
@@ -84,8 +84,8 @@ class Utils
     /**
      * Remove todos dos caracteres especiais, simbolos e acentos
      *  
-     * @name cleanString
-     * @return  string Texto sem caractere especiais
+     * @param string $texto
+     * @return  string 
      */
     public static function cleanString($texto)
     {

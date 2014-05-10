@@ -35,14 +35,12 @@ class NatSoap
        
     /**
      * 
-     * @param type $publicKey
-     * @param type $privateKey
-     * @param type $certificateKey
-     * @param type $pathWsdl
-     * @param type $timeout
+     * @param string $publicKey
+     * @param string $privateKey
+     * @param string $certificateKey
+     * @param string $pathWsdl
+     * @param integer $timeout
      * @return boolean
-     * @throws \Common\Exception\NfephpException
-     * @throws NfephpException
      */
     public function __construct($publicKey = '', $privateKey = '', $certificateKey = '', $pathWsdl = '', $timeout = 10)
     {
@@ -71,13 +69,12 @@ class NatSoap
      * usando as chaves publica e privada parametrizadas na contrução da classe.
      * Conforme Manual de Integração Versão 4.0.1 
      *
-     * @name send
      * @param string $urlsefaz
      * @param string $namespace
      * @param string $cabecalho
      * @param string $dados
      * @param string $metodo
-     * @param numeric $ambiente  tipo de ambiente 1 - produção e 2 - homologação
+     * @param integer $ambiente  tipo de ambiente 1 - produção e 2 - homologação
      * @param string $UF unidade da federação, necessário para diferenciar AM, MT e PR
      * @return mixed false se houve falha ou o retorno em xml do SEFAZ
      */

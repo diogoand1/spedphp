@@ -13,9 +13,21 @@ namespace SpedPHP\Common\Soap;
  */
 
 class CurlSoap
-{
+{   
+    /**
+     * soapDebug
+     * @var string 
+     */
     public $soapDebug = '';
+    /**
+     * error
+     * @var string 
+     */
     public $error = '';
+    /**
+     * soapTimeout
+     * @var integer 
+     */
     public $soapTimeout = 10;
     
     private $errorCurl = '';
@@ -71,7 +83,7 @@ class CurlSoap
     
     /**
      * __construct
-     * @name __construct
+     * 
      * @param string $privateKey path para a chave privada
      * @param string $publicKey path para a chave publica
      * @param string $timeout tempo de espera da resposta do webservice
@@ -84,9 +96,8 @@ class CurlSoap
     }//fim __construct
     
     /**
-     * setProxy
      * Seta o uso do proxy
-     * @name setProxy
+     * 
      * @param string $ipNumber numero IP do proxy server
      * @param string $port numero da porta usada pelo proxy
      * @param string $user nome do usuário do proxy
@@ -102,10 +113,8 @@ class CurlSoap
     }//fim setProxy
     
     /**
-     * send
      * Envia mensagem ao webservice
      * 
-     * @name send
      * @param string $urlsevice
      * @param string $namespace
      * @param string $header
@@ -125,8 +134,6 @@ class CurlSoap
         $data .= '</soap12:Envelope>';
         $data = $this->limpaMsg($data);
         //tamanho da mensagem
-        //file_put_contents('/var/tmp/phplog.xml', $data);
-        //exit;
         $tamanho = strlen($data);
         //estabelecimento dos parametros da mensagem
         $parametros = array(
@@ -261,6 +268,12 @@ class CurlSoap
         return $resposta;
     }//fim sendCurl
     
+    /**
+     * limpaMsg
+     * 
+     * @param string $msg
+     * @return string
+     */
     private function limpaMsg($msg)
     {
         $nmsg = str_replace(array("\n","\r","\t"), array('','',''), $msg);

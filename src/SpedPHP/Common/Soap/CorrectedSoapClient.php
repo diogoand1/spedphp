@@ -2,7 +2,7 @@
 
 namespace Spedphp\Common\Soap;
 
-use SoapClient;
+use \SoapClient;
 
 /**
  * Classe auxiliar para o envio de mesagens SOAP usando o SOAP nativo do PHP
@@ -24,7 +24,7 @@ use SoapClient;
  * @name CorrectSoapClient
  *
  */
-class CorrectedSoapClient extends SoapClient
+class CorrectedSoapClient extends \SoapClient
 {
     public function __construct($sefazURL, $options)
     {
