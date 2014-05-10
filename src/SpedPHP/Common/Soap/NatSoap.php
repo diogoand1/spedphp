@@ -20,7 +20,7 @@ class NatSoap
     /**
      *
      * @var string
-     */    
+     */
     public $soapDebug = '';
     /**
      *
