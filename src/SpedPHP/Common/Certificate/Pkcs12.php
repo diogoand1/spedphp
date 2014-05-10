@@ -17,6 +17,7 @@ use SpedPHP\Common\Certificate\Asn;
 use SpedPHP\Common\Components\Xml;
 use SpedPHP\Common\Exception;
 use \DOMDocument;
+use \DOMNode;
 
 class Pkcs12
 {
@@ -337,7 +338,7 @@ class Pkcs12
         $pkeyid = openssl_get_privatekey($this->priKey);
         // limpeza do xml com a retirada dos CR, LF e TAB
         
-        $xmldoc = new \DomDocument('1.0', 'utf-8');// carrega o documento no DOM
+        $xmldoc = new \DOMDocument('1.0', 'utf-8');// carrega o documento no DOM
         $xmldoc->preserveWhiteSpace = false; //elimina espaços em branco
         $xmldoc->formatOutput = false;
         $xmldoc->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
@@ -350,8 +351,10 @@ class Pkcs12
             );
         }
         $idNfe = trim($node->getAttribute("Id"));
-        $dados = $node->C14N(false, false, null, null);//extrai os dados da tag para uma string
-        $hashValue = hash('sha1', $dados, true);//calcular o hash dos dados
+        //extrai os dados da tag para uma string
+        $dados = $node->C14N(false, false, null, null);
+        //calcular o hash dos dados
+        $hashValue = hash('sha1', $dados, true);
         $digValue = base64_encode($hashValue);
         $signatureNode = $xmldoc->createElementNS($this->urlDSIG, 'Signature');
         $root->appendChild($signatureNode);

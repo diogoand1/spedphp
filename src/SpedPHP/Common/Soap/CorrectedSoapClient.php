@@ -2,8 +2,6 @@
 
 namespace Spedphp\Common\Soap;
 
-use \SoapClient;
-
 /**
  * Classe auxiliar para o envio de mesagens SOAP usando o SOAP nativo do PHP
  * @category   SpedPHP
@@ -14,18 +12,30 @@ use \SoapClient;
  * @link       http://github.com/nfephp-org/spedphp for the canonical source repository
  */
 
-/**
- * 
- * Classe complementar
- * necessária para a comunicação SOAP 1.2
- * Remove algumas tags para adequar a comunicação
- * ao padrão "esquisito" utilizado pelas SEFAZ
- *
- * @name CorrectSoapClient
- *
- */
+use \SoapClient;
+
 class CorrectedSoapClient extends \SoapClient
 {
+    /**
+     * __construct
+     * 
+     * @param mixed $wsdl
+     * @param array $options
+     */
+    public function __construct($wsdl, $options)
+    {
+        parent::SoapClient($wsdl, $options);
+    }
+    
+    /**
+     * __doRequest
+     * @param  string $request
+     * @param  string$location
+     * @param  string $action
+     * @param  int $version
+     * @param  int $oneWay 
+     * @return string
+     */
     public function __doRequest($request, $location, $action, $version, $oneWay = 0)
     {
         $aFind = array(":ns1","ns1:","\n","\r");

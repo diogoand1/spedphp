@@ -96,5 +96,4 @@ class NodeIterator implements RecursiveIterator
     {
         return $this->position < $this->nodeList->length;
     }
-
 }
