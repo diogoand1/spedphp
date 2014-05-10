@@ -522,13 +522,15 @@ class Pkcs12
      * Divide a string do certificado publico em linhas
      * com 76 caracteres (padrão original)
      * 
-     * @param string $cnt certificado
+     * @param string $cntIn certificado
      * @return string certificado reformatado 
      */
-    public static function splitLines($cnt = '')
+    public static function splitLines($cntIn = '')
     {
-        if ($cnt != '') {
-            $cnt = rtrim(chunk_split(str_replace(array("\r", "\n"), '', $cnt), 76, "\n"));
+        if ($cntIn != '') {
+            $cnt = rtrim(chunk_split(str_replace(array("\r", "\n"), '', $cntIn), 76, "\n"));
+        } else {
+            $cnt = $cntIn;
         }
         return $cnt;
     }

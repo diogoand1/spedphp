@@ -17,10 +17,25 @@ use SpedPHP\Common\Exception;
 
 class NatSoap
 {
-
+    /**
+     *
+     * @var string
+     */    
     public $soapDebug = '';
+    /**
+     *
+     * @var integer 
+     */
     public $soapTimeout = 10;
+    /**
+     *
+     * @var array 
+     */
     public $aError = array();
+    /**
+     *
+     * @var string 
+     */
     public $pathWsdl = '';
     
     protected $enableSVAN = false;
@@ -45,7 +60,7 @@ class NatSoap
     public function __construct($publicKey = '', $privateKey = '', $certificateKey = '', $pathWsdl = '', $timeout = 10)
     {
         try {
-            if ($certificateKey == '' or $privateKey = '' or $publicKey == '') {
+            if ($certificateKey == '' || $privateKey == '' || $publicKey == '') {
                 $msg = 'O path para as chaves deve ser passado na instânciação da classe.';
                 throw new Exception\InvalidArgumentException($msg);
             }

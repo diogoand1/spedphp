@@ -26,7 +26,7 @@ class Schema extends Document
     public $fileName = null;
     /**
      * parseTree
-     * @var \DomElement 
+     * @var \DOMDocument 
      */
     protected $parseTree = null;
 
@@ -79,14 +79,14 @@ class Schema extends Document
     /**
      * Load imports and includes
      *
-     * @param string $filepath Full path to first XSD Schema.
+     * @param string $filepathIn Full path to first XSD Schema.
      * @param \DOMDocument $domIn DOM model of the schema.
      * @throws RuntimeException 
      */
-    public function loadExternalFiles($filepath = null, $domIn = null)
+    public function loadExternalFiles($filepathIn = null, $domIn = null)
     {
         $dom = ($domIn instanceof \DOMDocument) ? $domIn : $this;
-        $filepath = realpath(dirname(is_null($filepath) ? $this->fileName : $filepath));
+        $filepath = realpath(dirname(is_null($filepathIn) ? $this->fileName : $filepathIn));
         $xpath = new \DOMXPath($dom);
         $readTags = array('import', 'include');
         foreach ($readTags as $tagName) {
@@ -98,7 +98,7 @@ class Schema extends Document
             foreach ($entries as $entry) {
                 $xsdFileName = realpath($filepath . DIRECTORY_SEPARATOR . $entry->getAttribute("schemaLocation"));
                 if (in_array($xsdFileName, $this->loadedImportFiles)) {
-                    $parent->removeChild($entry);
+                    //$parent->removeChild($entry);
                     continue;
                 }
                 if (!file_exists($xsdFileName)) {
@@ -128,7 +128,7 @@ class Schema extends Document
     }
 
     /**
-     *
+     * parseXml
      * @return SpedPHP\Components\Xml\Document
      */
     public function parseXml()

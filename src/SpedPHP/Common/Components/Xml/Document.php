@@ -39,16 +39,16 @@ class Document extends \DOMDocument
      * @param boolean  $unique  If sets TRUE, search if exists the same node.
      * @return \DOMNode The node added or if is unique, returns the node found.
      */
-    public function appendChild(\DOMNode $newNode, $unique = false)
+    public function appendChild(\DOMNode $newNodeIn, $unique = false)
     {
         $node = null;
         if ($unique) {
-            $node = parent::getElementsByTagName($newNode->localName)->item(0);
+            $node = parent::getElementsByTagName($newNodeIn->localName)->item(0);
         }
         if ($node !== null) {
-            $newNode = parent::replaceChild($newNode, $node);
+            $newNode = parent::replaceChild($newNodeIn, $node);
         } else {
-            $newNode = parent::appendChild($newNode);
+            $newNode = parent::appendChild($newNodeIn);
         }
         return $newNode;
     }
@@ -316,7 +316,8 @@ class Document extends \DOMDocument
                     $arrayElement[self::CONTENT] = $children;
                 }
                 $array[$item->nodeName][] = $arrayElement;
-            } elseif ($item->nodeType == XML_CDATA_SECTION_NODE || ($item->nodeType == XML_TEXT_NODE && trim($item->nodeValue) != '')) {
+            } elseif ($item->nodeType == XML_CDATA_SECTION_NODE ||
+                ($item->nodeType == XML_TEXT_NODE && trim($item->nodeValue) != '')) {
                 return $item->nodeValue;
             }
         }
