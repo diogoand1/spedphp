@@ -16,6 +16,7 @@ namespace SpedPHP\Common\Certificate;
 use SpedPHP\Common\Certificate\Asn;
 use SpedPHP\Common\Components\Xml;
 use SpedPHP\Common\Exception;
+use \DOMDocument;
 
 class Pkcs12
 {
@@ -336,7 +337,7 @@ class Pkcs12
         $pkeyid = openssl_get_privatekey($this->priKey);
         // limpeza do xml com a retirada dos CR, LF e TAB
         
-        $xmldoc = new Xml\Document('1.0', 'utf-8');// carrega o documento no DOM
+        $xmldoc = new \DomDocument('1.0', 'utf-8');// carrega o documento no DOM
         $xmldoc->preserveWhiteSpace = false; //elimina espaços em branco
         $xmldoc->formatOutput = false;
         $xmldoc->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);

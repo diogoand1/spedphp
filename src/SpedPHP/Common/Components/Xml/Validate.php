@@ -98,7 +98,7 @@ class Validate
     /**
      * Lista os erros em portugues 
      * 
-     * @param object $aIntErrors
+     * @param array $aIntErrors
      * @return string
      */
     private function xmlErros($aIntErrors)
