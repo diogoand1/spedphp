@@ -21,7 +21,11 @@ class Document extends \DOMDocument
      * @var array
      */
     protected $namespaces;
-
+    /**
+     * __construct
+     * @param string $version
+     * @param string $charset
+     */
     public function __construct($version = '1.0', $charset = 'UTF-8')
     {
         parent::__construct($version, $charset);
@@ -33,7 +37,6 @@ class Document extends \DOMDocument
      *
      * @param \DOMNode $newNode The appended child.
      * @param boolean  $unique  If sets TRUE, search if exists the same node.
-     *
      * @return \DOMNode The node added or if is unique, returns the node found.
      */
     public function appendChild(\DOMNode $newNode, $unique = false)
@@ -68,7 +71,7 @@ class Document extends \DOMDocument
 
     /**
      * Return array of namespaces of the document
-     *
+     * @param boolean $short
      * @return array
      */
     public function getNamespaces($short = false)
@@ -131,15 +134,12 @@ class Document extends \DOMDocument
     /**
      * isQName
      * 
-     * @param type $name
+     * @param string $name
      * @return boolean
      */
     public function isQName($name)
     {
-        if (preg_match('/:/', $name)) {
-            return true;
-        }
-        return false;
+        return (bool) preg_match('/:/', $name);
     }
 
     /**
@@ -302,7 +302,9 @@ class Document extends \DOMDocument
             $item = $domNode->childNodes->item($i);
             if ($item->nodeType == XML_ELEMENT_NODE) {
                 $arrayElement = array();
-                for ($attributeIndex = 0; !is_null($attribute = $item->attributes->item($attributeIndex)); $attributeIndex++) {
+                for ($attributeIndex = 0;
+                    !is_null($attribute = $item->attributes->item($attributeIndex));
+                    $attributeIndex++) {
                     if ($attribute->nodeType == XML_ATTRIBUTE_NODE) {
                         $arrayElement[self::ATTRIBUTES][$attribute->nodeName] = $attribute->nodeValue;
                     }

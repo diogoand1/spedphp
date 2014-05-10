@@ -157,7 +157,7 @@ class Asn
      * @param array $abIn
      * @param integer $qIn 
      * @param boolean $flag
-     * @return numeric
+     * @return integer
      */
     protected static function xBase128($abIn, $qIn, $flag)
     {

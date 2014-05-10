@@ -31,19 +31,17 @@ class Element extends \DOMElement
      *
      * @return DOMNode The node added or if is unique, returns the node found.
      */
-    public function appendChild(\DOMNode $newNode, $unique = false)
+    public function appendChild(\DOMNode $newNodeIn, $unique = false)
     {
         $node = null;
         if ($unique) {
-            $node = parent::getElementsByTagName($newNode->localName)->item(0);
+            $node = parent::getElementsByTagName($newNodeIn->localName)->item(0);
         }
-
         if ($node !== null) {
-            $newNode = parent::replaceChild($newNode, $node);
+            $newNode = parent::replaceChild($newNodeIn, $node);
         } else {
-            $newNode = parent::appendChild($newNode);
+            $newNode = parent::appendChild($newNodeIn);
         }
-
         return $newNode;
     }
 
@@ -81,7 +79,6 @@ class Element extends \DOMElement
     public function replaceChild(\DOMNode $newnode, \DOMNode $oldnode)
     {
         $newNode = parent::replaceChild($newnode, $oldnode);
-
         return $newNode;
     }
 

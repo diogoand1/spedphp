@@ -76,7 +76,7 @@ class Pkcs12
     /**
      * Timestamp da data de validade do certificado
      * 
-     * @var number
+     * @var float
      */
     public $expireTimestamp;
     /**
@@ -133,7 +133,7 @@ class Pkcs12
      * error da classe, os outros parâmetros serão limpos e os 
      * arquivos inválidos serão removidos da pasta
      * 
-     * @param booleam $flagCert indica que as chaves já foram passas como strings
+     * @param boolean $flagCert indica que as chaves já foram passas como strings
      * @return boolean 
      */
     private function init($flagCert = false)
@@ -522,7 +522,6 @@ class Pkcs12
      * Divide a string do certificado publico em linhas
      * com 76 caracteres (padrão original)
      * 
-     * @name splitLines
      * @param string $cnt certificado
      * @return string certificado reformatado 
      */

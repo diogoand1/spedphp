@@ -14,9 +14,20 @@ use SpedPHP\Common\Exception;
  */
 class Schema extends Document
 {
-
+    /**
+     * loadedImportFiles
+     * @var array 
+     */
     public $loadedImportFiles = array();
+    /**
+     * fileName
+     * @var string
+     */
     public $fileName = null;
+    /**
+     * parseTree
+     * @var \DomElement 
+     */
     protected $parseTree = null;
 
     /**
@@ -27,9 +38,11 @@ class Schema extends Document
      * @param bool $loadExternals [optional]<br>Includes or imports the file content if is TRUE.
      * @return boolean 
      */
-    public function load($filename, $options = null, $loadExternals = false)
+    public function load($filename, $optionsIn = null, $loadExternals = false)
     {
-        $options = (($options !== null) ? LIBXML_DTDLOAD | LIBXML_DTDATTR | LIBXML_NOENT | LIBXML_XINCLUDE : $options);
+        $options = (($optionsIn !== null) ?
+            LIBXML_DTDLOAD | LIBXML_DTDATTR | LIBXML_NOENT | LIBXML_XINCLUDE :
+            $optionsIn);
         if (!parent::load($filename, $options)) {
             return false;
         }
@@ -44,14 +57,16 @@ class Schema extends Document
      * Load XML from a string.
      * 
      * @param string $source The string containing the XML.
-     * @param int $options [optional]<br>Bitwise OR of the libxml option constants.
+     * @param int $optionsIn [optional]<br>Bitwise OR of the libxml option constants.
      * @param bool $loadExternals 
      * @return boolean true on success or false on failure. 
      * If called statically, returns a DOMDocument or false on failure.
      */
-    public function loadXML($source, $options = null, $loadExternals = false)
+    public function loadXML($source, $optionsIn = null, $loadExternals = false)
     {
-        $options = (($options !== null) ? LIBXML_DTDLOAD | LIBXML_DTDATTR | LIBXML_NOENT | LIBXML_XINCLUDE : $options);
+        $options = (($optionsIn !== null) ?
+            LIBXML_DTDLOAD | LIBXML_DTDATTR | LIBXML_NOENT | LIBXML_XINCLUDE :
+            $optionsIn);
         if (!parent::loadXML($source, $options)) {
             return false;
         }
@@ -65,12 +80,12 @@ class Schema extends Document
      * Load imports and includes
      *
      * @param string $filepath Full path to first XSD Schema.
-     * @param \DOMDocument $dom DOM model of the schema.
+     * @param \DOMDocument $domIn DOM model of the schema.
      * @throws RuntimeException 
      */
-    public function loadExternalFiles($filepath = null, $dom = null)
+    public function loadExternalFiles($filepath = null, $domIn = null)
     {
-        $dom = ($dom instanceof \DOMDocument) ? $dom : $this;
+        $dom = ($domIn instanceof \DOMDocument) ? $domIn : $this;
         $filepath = realpath(dirname(is_null($filepath) ? $this->fileName : $filepath));
         $xpath = new \DOMXPath($dom);
         $readTags = array('import', 'include');
@@ -124,7 +139,14 @@ class Schema extends Document
         $this->parseSchemaToXml($this->documentElement, $this->parseTree->documentElement);
         return $this->parseTree;
     }
-
+    
+    /**
+     * parseSchemaToXml
+     * 
+     * @param \DOMElement $xml
+     * @param \DOMElement $parent
+     * @return \DOMElement
+     */
     protected function parseSchemaToXml(\DOMElement $xml, \DOMElement $parent)
     {
         foreach ($xml->childNodes as $child) {

@@ -13,20 +13,20 @@ namespace SpedPHP\Common\Soap;
  */
 
 class CurlSoap
-{   
+{
     /**
      * soapDebug
-     * @var string 
+     * @var string
      */
     public $soapDebug = '';
     /**
      * error
-     * @var string 
+     * @var string
      */
     public $error = '';
     /**
      * soapTimeout
-     * @var integer 
+     * @var integer
      */
     public $soapTimeout = 10;
     

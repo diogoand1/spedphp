@@ -16,13 +16,13 @@ class NodeIterator implements RecursiveIterator
      * Current Position in DOMNodeList
      * @var Integer
      */
-    protected $_position;
+    protected $position;
 
     /**
      * The DOMNodeList with all children to iterate over
      * @var \DOMNodeList
      */
-    protected $_nodeList;
+    protected $nodeList;
 
     /**
      * @param \DOMNode $domNode
@@ -30,8 +30,8 @@ class NodeIterator implements RecursiveIterator
      */
     public function __construct(\DOMNode $domNode)
     {
-        $this->_position = 0;
-        $this->_nodeList = $domNode->childNodes;
+        $this->position = 0;
+        $this->nodeList = $domNode->childNodes;
     }
 
     /**
@@ -40,7 +40,7 @@ class NodeIterator implements RecursiveIterator
      */
     public function current()
     {
-        return $this->_nodeList->item($this->_position);
+        return $this->nodeList->item($this->position);
     }
 
     /**
@@ -67,7 +67,7 @@ class NodeIterator implements RecursiveIterator
      */
     public function key()
     {
-        return $this->_position;
+        return $this->position;
     }
 
     /**
@@ -76,7 +76,7 @@ class NodeIterator implements RecursiveIterator
      */
     public function next()
     {
-        $this->_position++;
+        $this->position++;
     }
 
     /**
@@ -85,7 +85,7 @@ class NodeIterator implements RecursiveIterator
      */
     public function rewind()
     {
-        $this->_position = 0;
+        $this->position = 0;
     }
 
     /**
@@ -94,7 +94,7 @@ class NodeIterator implements RecursiveIterator
      */
     public function valid()
     {
-        return $this->_position < $this->_nodeList->length;
+        return $this->position < $this->nodeList->length;
     }
 
 }

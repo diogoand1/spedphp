@@ -22,6 +22,9 @@ class Validate
      */
     public $aError = array();
     
+    /**
+     * 
+     */
     public function __construct()
     {
         // Habilita a manipulaçao de erros da libxml
@@ -65,7 +68,7 @@ class Validate
                 $dom->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
             }
             //recupera os erros da libxml
-            $errors = libxml_get_errors();
+            $errors = \libxml_get_errors();
             if (!empty($errors)) {
                 $msg = $this->xmlErros($errors);
                 $aError = $this->aError;
